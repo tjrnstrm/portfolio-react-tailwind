@@ -2,7 +2,10 @@ import { HeroBackground } from './HeroBackground';
 
 export function Hero() {
   return (
-    <section className="relative isolate w-full h-full flex flex-col items-center justify-center text-center overflow-hidden">
+    <section
+      style={{ paddingBottom: 'var(--nav-h, 74px)' }}
+      className="relative isolate w-full h-full flex flex-col items-center justify-center text-center overflow-hidden"
+    >
       <HeroBackground />
 
       <div className="absolute top-0 right-0 z-10 flex flex-col items-center gap-2 mt-12">

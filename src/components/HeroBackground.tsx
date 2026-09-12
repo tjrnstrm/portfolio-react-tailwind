@@ -132,10 +132,13 @@ export function HeroBackground() {
       aria-hidden="true"
       className="pointer-events-none absolute inset-0 z-0 h-full w-full"
       style={{
+        // Fades in at the top, dims behind the centred text, returns for the
+        // lower third, then dissolves to nothing before the fold — no marquee
+        // to cap the clipped bottom edge, so the rain has to end softly itself.
         maskImage:
-          'linear-gradient(to bottom, #000 0%, rgba(0,0,0,0.12) 40%, rgba(0,0,0,0.12) 60%, #000 100%)',
+          'linear-gradient(to bottom, #000 0%, rgba(0,0,0,0.12) 38%, rgba(0,0,0,0.12) 55%, #000 72%, transparent 100%)',
         WebkitMaskImage:
-          'linear-gradient(to bottom, #000 0%, rgba(0,0,0,0.12) 40%, rgba(0,0,0,0.12) 60%, #000 100%)',
+          'linear-gradient(to bottom, #000 0%, rgba(0,0,0,0.12) 38%, rgba(0,0,0,0.12) 55%, #000 72%, transparent 100%)',
       }}
     />
   );

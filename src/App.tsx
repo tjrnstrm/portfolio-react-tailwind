@@ -3,7 +3,6 @@ import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { Projects } from './components/Projects';
 import { About } from './components/About';
-import { Marquee } from './components/Marquee';
 import { Footer } from './components/Footer'
 
 export default function App() {
@@ -54,13 +53,10 @@ export default function App() {
     <div className="font-display min-h-screen text-zinc-900 dark:text-zinc-100">
       <Navbar ref={navRef} onToggleTheme={toggleTheme} scrolled={scrolled} />
       <div
-        className="flex flex-col"
+        className="px-4 sm:px-8 lg:px-12"
         style={{ height: 'calc(100dvh - var(--nav-h, 74px))' }}
       >
-        <div className="flex-1 min-h-0 px-4 sm:px-8 lg:px-12">
-          <Hero />
-        </div>
-        <Marquee />
+        <Hero />
       </div>
       <div className="px-4 sm:px-8 lg:px-12">
         <Projects />
