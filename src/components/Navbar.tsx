@@ -1,5 +1,7 @@
 import type { Ref } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { FiSun, FiMoon } from "react-icons/fi";
+import { CtaPill } from "./CtaPill";
 
 type NavbarProps = {
   onToggleTheme: () => void;
@@ -8,11 +10,13 @@ type NavbarProps = {
 };
 
 const links = [
-  { label: "Work", href: "#work" },
-  { label: "About", href: "#about" },
+  { label: "Work", to: "/#work" },
+  { label: "About", to: "/#about" },
 ];
 
 export function Navbar({ onToggleTheme, scrolled, ref }: NavbarProps) {
+  const onContactPage = useLocation().pathname === "/contact";
+
   return (
     <nav
       ref={ref}
@@ -27,22 +31,30 @@ export function Navbar({ onToggleTheme, scrolled, ref }: NavbarProps) {
           : "py-5 px-6 sm:px-8 lg:px-12 border-transparent bg-transparent"
       }`}
     >
-      <a
-        href="#"
+      <Link
+        to="/"
         aria-label="Tjernström — back to top"
         className="font-heading text-sm font-extralight uppercase tracking-[0.3em] leading-none whitespace-nowrap transition-opacity hover:opacity-70"
       >
         Tjernstrom
-      </a>
+      </Link>
 
       <div className="flex items-center gap-1 uppercase">
         <div className="hidden sm:flex items-center gap-1">
           {links.map((l) => (
-            <a key={l.href} href={l.href} className="nav-link font-light">
+            <Link key={l.to} to={l.to} className="nav-link font-light tracking-[0.3em]">
               {l.label}
-            </a>
+            </Link>
           ))}
         </div>
+        {!onContactPage && (
+          <div className="mx-1 sm:ml-3">
+            <CtaPill to="/contact">
+              <span className="sm:hidden">Contact</span>
+              <span className="hidden sm:inline">Start a project</span>
+            </CtaPill>
+          </div>
+        )}
         <button
           onClick={onToggleTheme}
           aria-label="Toggle color theme"

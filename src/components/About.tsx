@@ -88,9 +88,9 @@ export function About() {
             </div>
             <a
               className="tracking-normal hover:text-zinc-950 dark:hover:text-zinc-200 transition-colors"
-              href="mailto:alex_tjernstrom@hotmail.com"
+              href="mailto:tjernstrom@proton.me"
             >
-              alex_tjernstrom@hotmail.com
+              tjernstrom@proton.me
             </a>
           </div>
         </div>

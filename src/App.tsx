@@ -1,9 +1,9 @@
 import { useState, useEffect, useLayoutEffect, useRef } from 'react';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { Navbar } from './components/Navbar';
-import { Hero } from './components/Hero';
-import { Projects } from './components/Projects';
-import { About } from './components/About';
-import { Footer } from './components/Footer'
+import { ScrollManager } from './components/ScrollManager';
+import { Home } from './pages/Home';
+import { Contact } from './pages/Contact';
 
 export default function App() {
   const [theme, setTheme] = useState<'dark' | 'light'>(
@@ -52,17 +52,12 @@ export default function App() {
   return (
     <div className="font-display min-h-screen text-zinc-900 dark:text-zinc-100">
       <Navbar ref={navRef} onToggleTheme={toggleTheme} scrolled={scrolled} />
-      <div
-        className="px-4 sm:px-8 lg:px-12"
-        style={{ height: 'calc(100dvh - var(--nav-h, 74px))' }}
-      >
-        <Hero />
-      </div>
-      <div className="px-4 sm:px-8 lg:px-12">
-        <Projects />
-        <About />
-        <Footer />
-      </div>
+      <ScrollManager />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
     </div>
   );
 }

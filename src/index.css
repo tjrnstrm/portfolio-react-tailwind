@@ -104,6 +104,277 @@ html {
   100% { transform: translateX(-50%); }
 }
 
+/* ---------------------------------------------------------------------------
+   Glass ("Frost"): frosted surfaces over slow, blurred colour blobs.
+   Light = Frost as designed; dark is its night-time counterpart. Everything
+   reads from these tokens so a component only has to name the class.
+   ------------------------------------------------------------------------- */
+:root {
+  --glass-bg: rgb(255 255 255 / 0.55);
+  --glass-sheen: rgb(255 255 255 / 0.35);
+  --glass-edge: rgb(255 255 255 / 0.85);
+  --glass-hi: rgb(255 255 255 / 0.9);
+  --glass-shadow: 0 10px 40px rgb(30 41 59 / 0.07);
+  --glass-line: rgb(15 23 42 / 0.1);
+  --glass-line-strong: rgb(15 23 42 / 0.22);
+
+  --glass-chip-bg: rgb(255 255 255 / 0.7);
+  --glass-chip-hi: rgb(255 255 255 / 0.95);
+  --glass-chip-shadow: 0 1px 2px rgb(15 23 42 / 0.05);
+  --glass-chip-on-bg: rgb(255 255 255 / 0.96);
+  --glass-chip-on-edge: rgb(24 24 27 / 0.32);
+  --glass-chip-on-glow: rgb(15 23 42 / 0.1);
+  --glass-mark: rgb(15 23 42 / 0.3);
+  --glass-mark-on: #dc2626;
+
+  --glass-field-bg: rgb(255 255 255 / 0.75);
+  --glass-field-shadow: inset 0 1px 2px rgb(15 23 42 / 0.04);
+  --glass-placeholder: #71717a;
+  --glass-focus: rgb(24 24 27 / 0.45);
+  --glass-focus-ring: rgb(24 24 27 / 0.08);
+
+  --glass-pill-bg: rgb(255 255 255 / 0.72);
+  --glass-pill-bg-hover: rgb(255 255 255 / 0.95);
+  --glass-pill-hi: rgb(255 255 255 / 0.95);
+  --glass-pill-shadow: 0 1px 2px rgb(15 23 42 / 0.06), 0 6px 18px rgb(15 23 42 / 0.08);
+  --glass-primary-bg: rgb(24 24 27 / 0.9);
+  --glass-primary-bg-hover: rgb(24 24 27 / 1);
+  --glass-primary-fg: #fafafa;
+  --glass-primary-shadow: 0 8px 22px rgb(24 24 27 / 0.26);
+
+  --blob-a: #c7dbff;
+  --blob-b: #ffdccc;
+  --blob-c: #ddd5ff;
+}
+
+.dark {
+  --glass-bg: rgb(255 255 255 / 0.05);
+  --glass-sheen: rgb(255 255 255 / 0.07);
+  --glass-edge: rgb(255 255 255 / 0.1);
+  --glass-hi: rgb(255 255 255 / 0.14);
+  --glass-shadow: 0 12px 44px rgb(0 0 0 / 0.4);
+  --glass-line: rgb(255 255 255 / 0.1);
+  --glass-line-strong: rgb(255 255 255 / 0.22);
+
+  --glass-chip-bg: rgb(255 255 255 / 0.06);
+  --glass-chip-hi: rgb(255 255 255 / 0.12);
+  --glass-chip-shadow: 0 1px 2px rgb(0 0 0 / 0.3);
+  --glass-chip-on-bg: rgb(255 255 255 / 0.15);
+  --glass-chip-on-edge: rgb(255 255 255 / 0.4);
+  --glass-chip-on-glow: rgb(0 0 0 / 0.35);
+  --glass-mark: rgb(255 255 255 / 0.3);
+  --glass-mark-on: #ef4444;
+
+  --glass-field-bg: rgb(255 255 255 / 0.06);
+  --glass-field-shadow: inset 0 1px 2px rgb(0 0 0 / 0.35);
+  --glass-placeholder: #71717a;
+  --glass-focus: rgb(255 255 255 / 0.4);
+  --glass-focus-ring: rgb(255 255 255 / 0.09);
+
+  --glass-pill-bg: rgb(255 255 255 / 0.09);
+  --glass-pill-bg-hover: rgb(255 255 255 / 0.16);
+  --glass-pill-hi: rgb(255 255 255 / 0.16);
+  --glass-pill-shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 6px 18px rgb(0 0 0 / 0.3);
+  --glass-primary-bg: rgb(255 255 255 / 0.17);
+  --glass-primary-bg-hover: rgb(255 255 255 / 0.25);
+  --glass-primary-fg: #fafafa;
+  --glass-primary-shadow: 0 8px 26px rgb(0 0 0 / 0.45);
+
+  --blob-a: rgb(99 102 241 / 0.4);
+  --blob-b: rgb(244 63 94 / 0.17);
+  --blob-c: rgb(139 92 246 / 0.32);
+}
+
+.glass {
+  background-color: var(--glass-bg);
+  background-image: linear-gradient(135deg, var(--glass-sheen), transparent 45%);
+  border: 1px solid var(--glass-edge);
+  box-shadow: inset 0 1px 0 var(--glass-hi), var(--glass-shadow);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  backdrop-filter: blur(28px) saturate(180%);
+}
+
+.glass-tag {
+  background: var(--glass-chip-bg);
+  border: 1px solid var(--glass-line);
+  box-shadow: inset 0 1px 0 var(--glass-chip-hi), var(--glass-chip-shadow);
+  -webkit-backdrop-filter: blur(14px) saturate(180%);
+  backdrop-filter: blur(14px) saturate(180%);
+}
+
+.glass-badge {
+  background: var(--glass-chip-bg);
+  border: 1px solid var(--glass-line);
+  box-shadow: inset 0 1px 0 var(--glass-chip-hi);
+}
+
+/* Pill buttons/links: no border, the edge is a top highlight + soft shadow. */
+.glass-pill {
+  background: var(--glass-pill-bg);
+  box-shadow: inset 0 1px 0 var(--glass-pill-hi), var(--glass-pill-shadow);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  backdrop-filter: blur(16px) saturate(180%);
+  transition:
+    background-color 200ms,
+    box-shadow 200ms,
+    transform 200ms;
+}
+.glass-pill:hover {
+  background: var(--glass-pill-bg-hover);
+}
+.glass-pill:active {
+  transform: scale(0.985);
+}
+.glass-pill--primary {
+  background: var(--glass-primary-bg);
+  color: var(--glass-primary-fg);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.28), var(--glass-primary-shadow);
+}
+.glass-pill--primary:hover {
+  background: var(--glass-primary-bg-hover);
+}
+
+.glass-field {
+  min-height: 3rem;
+  width: 100%;
+  padding: 0 1rem;
+  border-radius: 14px;
+  border: 1px solid var(--glass-line);
+  background: var(--glass-field-bg);
+  box-shadow: var(--glass-field-shadow);
+  font-size: 15px;
+  transition:
+    border-color 150ms,
+    box-shadow 150ms;
+}
+.glass-field::placeholder {
+  color: var(--glass-placeholder);
+}
+.glass-field:focus {
+  outline: none;
+  border-color: var(--glass-focus);
+  box-shadow: var(--glass-field-shadow), 0 0 0 4px var(--glass-focus-ring);
+}
+textarea.glass-field {
+  padding: 0.875rem 1rem;
+  line-height: 1.6;
+  resize: vertical;
+}
+
+/* Selection chip: a real checkbox/radio inside, styled by :has(:checked). */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  padding: 0 1.25rem 0 0.875rem;
+  border-radius: 9999px;
+  border: 1px solid var(--glass-line);
+  background: var(--glass-chip-bg);
+  box-shadow: inset 0 1px 0 var(--glass-chip-hi), var(--glass-chip-shadow);
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background-color 150ms,
+    border-color 150ms,
+    box-shadow 150ms;
+}
+.chip:hover {
+  border-color: var(--glass-line-strong);
+}
+.chip:has(:checked) {
+  background: var(--glass-chip-on-bg);
+  border-color: var(--glass-chip-on-edge);
+  box-shadow: inset 0 1px 0 var(--glass-chip-hi), 0 4px 14px var(--glass-chip-on-glow);
+}
+.chip:has(:focus-visible) {
+  outline: 2px solid var(--glass-focus);
+  outline-offset: 3px;
+}
+.chip-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 9999px;
+  border: 1.5px solid var(--glass-mark);
+  color: #fff;
+  transition:
+    background-color 150ms,
+    border-color 150ms;
+}
+.chip-mark svg {
+  opacity: 0;
+  transform: scale(0.5);
+  transition:
+    opacity 150ms,
+    transform 150ms;
+}
+.chip:has(:checked) .chip-mark {
+  background: var(--glass-mark-on);
+  border-color: var(--glass-mark-on);
+}
+.chip:has(:checked) .chip-mark svg {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* The colour behind the glass. Slow drift is what makes it feel liquid. */
+.blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(100px);
+  will-change: transform;
+  animation: blob-drift 28s ease-in-out infinite alternate;
+}
+.blob-a {
+  top: -140px;
+  right: -180px;
+  width: min(640px, 90vw);
+  height: min(640px, 90vw);
+  background: var(--blob-a);
+}
+.blob-b {
+  top: 40%;
+  left: -160px;
+  width: min(540px, 80vw);
+  height: min(540px, 80vw);
+  background: var(--blob-b);
+  animation-duration: 34s;
+  animation-delay: -9s;
+}
+.blob-c {
+  bottom: 12%;
+  right: -120px;
+  width: min(600px, 85vw);
+  height: min(600px, 85vw);
+  background: var(--blob-c);
+  animation-duration: 40s;
+  animation-delay: -18s;
+}
+@keyframes blob-drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-40px, 50px, 0) scale(1.08);
+  }
+  100% {
+    transform: translate3d(30px, -30px, 0) scale(0.94);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .blob {
+    animation: none;
+  }
+  .glass-pill {
+    transition: none;
+  }
+}
+
 @theme {
   --font-display: 'Inter', sans-serif;
   --font-heading: 'Geist', 'Inter', sans-serif;
