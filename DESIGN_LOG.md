@@ -592,6 +592,21 @@ _Status: **A picked and shipped** (take two) — airy wordmark, no red period
     Portfolio, App and API. The About page has the code rain behind it (`page`
     variant at `strength={1}`, since there is no glass) and lost its two
     horizontal rules; only the footer line is left.
+50. **Direct links.** `vercel.json` rewrites every path except `/api/*` to
+    `index.html`, so opening or refreshing `/contact` or `/about` works instead
+    of giving Vercel's 404 (the routes only exist in the browser). Real files
+    (`/CV.pdf`, assets) and the function are served before the rewrite.
+51. **One code rain for the whole site.** `CodeRain` is mounted once in
+    `App.tsx` as a fixed layer, instead of once per page, so the rain keeps
+    falling when you change page (the same canvas element stays in the DOM). It
+    has `view-transition-name: rain`, so the page fade doesn't touch it. The
+    fade mask (`hero` on the home page, `page` elsewhere) and the brightness
+    (`strength`, 2.4 on contact, else 1) ease between pages: the mask through
+    registered `@property` numbers in `index.css`, the brightness in the draw
+    loop. A resize keeps the columns it has (it only adds or drops columns at the
+    edge): the contact page has a scrollbar, which narrows the canvas by about
+    15px, and that used to rebuild everything and restart the rain. The still
+    reduced-motion scatter is repainted after a resize for the same reason.
 
 ---
 

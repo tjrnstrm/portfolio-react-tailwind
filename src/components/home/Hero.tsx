@@ -1,4 +1,3 @@
-import { CodeRain } from '../ui/CodeRain';
 import { RedArrow } from '../ui/RedArrow';
 import { TransitionLink } from '../ui/TransitionLink';
 
@@ -22,8 +21,6 @@ export function Hero() {
       style={{ paddingBottom: 'var(--nav-h, 74px)' }}
       className="relative isolate w-full h-full flex flex-col items-center justify-center text-center overflow-hidden"
     >
-      <CodeRain />
-
       <Status className="absolute top-1 left-2 z-10 flex text-[11px] sm:hidden" />
 
       <div className="relative z-10 flex flex-col items-center gap-10 sm:gap-12">

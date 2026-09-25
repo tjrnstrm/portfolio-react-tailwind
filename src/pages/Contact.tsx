@@ -5,7 +5,6 @@ import { ContactDetails } from '../components/contact/ContactDetails';
 import { PitchPanel } from '../components/contact/PitchPanel';
 import { ServicesList } from '../components/contact/ServicesList';
 import { Footer } from '../components/layout/Footer';
-import { CodeRain } from '../components/ui/CodeRain';
 import { STEPS } from '../data/brief';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import {
@@ -68,9 +67,8 @@ export function Contact() {
   };
 
   return (
-    // Pulled up under the navbar so the code rain behind the glass runs to the top
-    // edge; the content starts 1.5rem below it (the pill state of the navbar ends
-    // 1.25rem above that, see Navbar.tsx).
+    // Pulled up under the navbar; the content starts 1.5rem below the top edge
+    // (the pill state of the navbar ends 1.25rem above that, see Navbar.tsx).
     <div
       style={{
         marginTop: 'calc(var(--nav-h, 72px) * -1)',
@@ -78,10 +76,6 @@ export function Contact() {
       }}
       className="relative isolate overflow-clip px-4 font-heading sm:px-8 lg:px-12"
     >
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
-        <CodeRain variant="page" />
-      </div>
-
       <div className="grid gap-y-8 lg:mb-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-x-6">
         <PitchPanel />
 

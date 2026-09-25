@@ -8,26 +8,29 @@ const COL_W = FONT * 1.35;
 
 const rndGlyph = () => GLYPHS[(Math.random() * GLYPHS.length) | 0];
 
-const HERO_MASK =
-  'linear-gradient(to bottom, #000 0%, rgba(0,0,0,0.12) 38%, rgba(0,0,0,0.12) 55%, #000 72%, transparent 100%)';
-const PAGE_MASK =
-  'linear-gradient(to bottom, transparent 0%, #000 14%, #000 86%, transparent 100%)';
-
 /**
- * Code rain. `hero` (default) fills its section and scrolls away with it;
- * `page` is a fixed, viewport-sized layer that stays put while the page
- * (and any glass on it) scrolls over it.
+ * The code rain behind every page. There is one of it, mounted in App, so it
+ * keeps falling when you move between pages instead of starting over. It is a
+ * fixed, viewport-sized layer that the page scrolls over.
+ *
+ * `hero` (the home page) dims the rain behind the centred text, `page` keeps it
+ * even with soft top and bottom edges (see .code-rain in index.css, which also
+ * fades between the two). `strength` scales the brightness; the contact page
+ * uses more because its rain sits behind blurred glass. Both change smoothly.
  */
 export function CodeRain({
-  variant = 'hero',
-  strength,
+  mode,
+  strength = 1,
 }: {
-  variant?: 'hero' | 'page';
-  /** Brightness multiplier. Defaults to 2.4 on `page` (it sits behind blurred glass) and 1 on `hero`; pass 1 for plain text on top. */
+  mode: 'hero' | 'page';
   strength?: number;
 }) {
-  const boost = strength ?? (variant === 'page' ? 2.4 : 1);
   const ref = useRef<HTMLCanvasElement | null>(null);
+  const target = useRef(strength);
+
+  useEffect(() => {
+    target.current = strength;
+  }, [strength]);
 
   useEffect(() => {
     const canvas = ref.current;
@@ -38,7 +41,8 @@ export function CodeRain({
     const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
     let w = 0;
     let h = 0;
-    let cols: Column[] = [];
+    const cols: Column[] = [];
+    let boost = target.current;
 
     const isDark = () => document.documentElement.classList.contains('dark');
 
@@ -52,6 +56,9 @@ export function CodeRain({
       };
     };
 
+    // Sizes the canvas and adds or drops columns to fit, but keeps the ones it
+    // has: a page with a scrollbar makes the canvas a few pixels narrower, and
+    // that must not restart the rain.
     const build = () => {
       const rect = canvas.getBoundingClientRect();
       w = rect.width;
@@ -61,11 +68,39 @@ export function CodeRain({
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.font = `${FONT}px "Geist Mono", ui-monospace, monospace`;
       ctx.textBaseline = 'top';
-      cols = Array.from({ length: Math.ceil(w / COL_W) + 1 }, () => makeCol(false));
+      const count = Math.ceil(w / COL_W) + 1;
+      if (cols.length > count) cols.length = count;
+      while (cols.length < count) cols.push(makeCol(false));
     };
     build();
 
-    const ro = new ResizeObserver(build);
+    // Reduced motion: a still scatter of glyphs. It is drawn from fixed picks
+    // (per column: which of three rows, and the glyph), so it can be painted
+    // again after a resize clears the canvas.
+    const still = new Map<number, { y: number; g: string }[]>();
+    const paintStill = () => {
+      ctx.clearRect(0, 0, w, h);
+      ctx.font = `${FONT}px "Geist Mono", ui-monospace, monospace`;
+      ctx.textBaseline = 'top';
+      ctx.fillStyle = isDark() ? 'rgba(138,152,255,0.10)' : 'rgba(74,86,165,0.09)';
+      for (let i = 0; i < cols.length; i++) {
+        if (!still.has(i)) {
+          still.set(
+            i,
+            Array.from({ length: 3 }, () => ({ y: Math.random(), g: rndGlyph() })).filter(
+              () => Math.random() < 0.6,
+            ),
+          );
+        }
+        const x = i * COL_W + (COL_W - FONT) / 2;
+        for (const s of still.get(i)!) ctx.fillText(s.g, x, s.y * h);
+      }
+    };
+
+    const ro = new ResizeObserver(() => {
+      build();
+      if (reduce) paintStill();
+    });
     ro.observe(canvas);
 
     let raf = 0;
@@ -76,6 +111,9 @@ export function CodeRain({
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
       ctx.clearRect(0, 0, w, h);
+
+      // ease the brightness towards the current page's value
+      boost += (target.current - boost) * Math.min(1, dt * 3);
 
       const d = isDark();
       const head = d ? '214,220,255' : '35,42,110';
@@ -105,17 +143,7 @@ export function CodeRain({
     };
 
     if (reduce) {
-      ctx.clearRect(0, 0, w, h);
-      ctx.font = `${FONT}px "Geist Mono", ui-monospace, monospace`;
-      ctx.textBaseline = 'top';
-      const d = isDark();
-      ctx.fillStyle = d ? 'rgba(138,152,255,0.10)' : 'rgba(74,86,165,0.09)';
-      for (let i = 0; i < cols.length; i++) {
-        const x = i * COL_W + (COL_W - FONT) / 2;
-        for (let k = 0; k < 3; k++) {
-          if (Math.random() < 0.6) ctx.fillText(rndGlyph(), x, Math.random() * h);
-        }
-      }
+      paintStill();
       return () => ro.disconnect();
     }
 
@@ -141,21 +169,14 @@ export function CodeRain({
       io.disconnect();
       cancelAnimationFrame(raf);
     };
-  }, [boost]);
+  }, []);
 
   return (
     <canvas
       ref={ref}
       aria-hidden="true"
-      className={`pointer-events-none inset-0 z-0 h-full w-full ${variant === 'page' ? 'fixed' : 'absolute'}`}
-      style={{
-        // Hero: fades in at the top, dims behind the centred text, returns for
-        // the lower third, then dissolves to nothing before the fold — no
-        // marquee to cap the clipped bottom edge, so the rain has to end
-        // softly itself. Page: just soft top and bottom edges.
-        maskImage: variant === 'page' ? PAGE_MASK : HERO_MASK,
-        WebkitMaskImage: variant === 'page' ? PAGE_MASK : HERO_MASK,
-      }}
+      data-mode={mode}
+      className="code-rain pointer-events-none fixed inset-0 z-0 h-full w-full"
     />
   );
 }

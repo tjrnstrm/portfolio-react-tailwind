@@ -437,3 +437,85 @@ form > .reveal:nth-child(n + 3) {
   --breakpoint-laptop: 1080px;
   --breakpoint-desktop: 1440px;
 }
+
+/* The code rain (CodeRain.tsx): one fixed layer for the whole site. Its fade
+   mask is built from registered numbers, so moving between the home page and
+   the others eases the mask instead of jumping. Top to bottom the stops are at
+   0, 14, 38, 55, 72, 86 and 100%. hero: dim behind the centred text, page: even
+   with soft top and bottom edges. */
+@property --rain-a0 {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 1;
+}
+@property --rain-a1 {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 1;
+}
+@property --rain-mid {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 1;
+}
+@property --rain-a2 {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 1;
+}
+@property --rain-a3 {
+  syntax: '<number>';
+  inherits: false;
+  initial-value: 1;
+}
+.code-rain {
+  --mask: linear-gradient(
+    to bottom,
+    rgb(0 0 0 / var(--rain-a0)) 0%,
+    rgb(0 0 0 / var(--rain-a1)) 14%,
+    rgb(0 0 0 / var(--rain-mid)) 38%,
+    rgb(0 0 0 / var(--rain-mid)) 55%,
+    rgb(0 0 0 / var(--rain-a2)) 72%,
+    rgb(0 0 0 / var(--rain-a3)) 86%,
+    transparent 100%
+  );
+  -webkit-mask-image: var(--mask);
+  mask-image: var(--mask);
+  transition:
+    --rain-a0 900ms ease,
+    --rain-a1 900ms ease,
+    --rain-mid 900ms ease,
+    --rain-a2 900ms ease,
+    --rain-a3 900ms ease;
+  view-transition-name: rain;
+}
+.code-rain[data-mode='hero'] {
+  --rain-a0: 1;
+  --rain-a1: 0.68;
+  --rain-mid: 0.12;
+  --rain-a2: 1;
+  --rain-a3: 0.5;
+}
+.code-rain[data-mode='page'] {
+  --rain-a0: 0;
+  --rain-a1: 1;
+  --rain-mid: 1;
+  --rain-a2: 1;
+  --rain-a3: 1;
+}
+/* Page transitions leave the rain alone: it is not part of the page that fades
+   out, and only its live "new" layer is shown, so it never doubles up. */
+::view-transition-group(rain) {
+  animation: none;
+}
+::view-transition-old(rain) {
+  display: none;
+}
+::view-transition-new(rain) {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .code-rain {
+    transition: none;
+  }
+}
