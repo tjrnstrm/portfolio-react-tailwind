@@ -2,8 +2,8 @@ import type { ReactNode } from 'react';
 import { TransitionLink } from './TransitionLink';
 
 const SIZE = {
-  sm: 'gap-2 px-4 py-2.5 text-xs',
-  lg: 'gap-4 px-7 py-4 text-sm',
+  sm: 'gap-2 px-4 py-2.5 text-[13px]',
+  lg: 'gap-4 px-7 py-4 text-[15px]',
 };
 
 type CtaPillProps = {
@@ -24,13 +24,13 @@ const focusRing =
  */
 export function CtaPill({ to, size = 'sm', quiet, children }: CtaPillProps) {
   if (quiet) {
-    // The navbar version. It resets the navbar's uppercase and wide letter-spacing,
-    // and matches the regular small pill's height (py-2.5 with a 16px line) so the
-    // navbar doesn't change height.
+    // The navbar version: the arrow only shows on hover or focus, and it matches
+    // the regular small pill's height (py-2.5 with a 16px line) so the navbar
+    // doesn't change height.
     return (
       <TransitionLink
         to={to}
-        className={`glass-pill group inline-flex items-center rounded-full px-4 py-2.5 font-heading text-[13px] leading-4 font-medium tracking-normal normal-case whitespace-nowrap text-zinc-900 dark:text-zinc-100 ${focusRing}`}
+        className={`glass-pill group inline-flex items-center rounded-full px-4 py-2.5 font-heading text-[13px] leading-4 font-medium whitespace-nowrap text-zinc-900 dark:text-zinc-100 ${focusRing}`}
       >
         <span>{children}</span>
         <span
@@ -46,7 +46,7 @@ export function CtaPill({ to, size = 'sm', quiet, children }: CtaPillProps) {
   return (
     <TransitionLink
       to={to}
-      className={`glass-pill group inline-flex items-center rounded-full font-normal tracking-[0.3em] whitespace-nowrap text-zinc-900 uppercase ${focusRing} dark:text-zinc-100 ${SIZE[size]}`}
+      className={`glass-pill group inline-flex items-center rounded-full font-heading font-medium whitespace-nowrap text-zinc-900 ${focusRing} dark:text-zinc-100 ${SIZE[size]}`}
     >
       <span>{children}</span>
       <span

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@400..600&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@400..600&family=Sora:wght@200..400&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 @import 'tailwindcss';
 
 @custom-variant dark (&:where(.dark, .dark *));
@@ -173,7 +173,7 @@ html {
     position: sticky;
     /* below the navbar pill: 1.25rem offset + 56px pill + 1.25rem gap = the
        navbar's flow height (--nav-h) + 1.5rem */
-    top: min(calc(var(--nav-h, 72px) + 1.5rem), calc(100dvh - var(--panel-h, 0px) - 1.25rem));
+    top: min(calc(var(--nav-h, 72px) + 1.5rem), calc(100dvh - var(--panel-h, 0px) - 2.5rem));
   }
 }
 
@@ -429,6 +429,9 @@ form > .reveal:nth-child(n + 3) {
 @theme {
   --font-display: 'Inter', sans-serif;
   --font-heading: 'Geist', 'Inter', sans-serif;
+  /* Sora: the big type only (hero name, page headlines, question titles). Buttons,
+     chips, the navbar and paragraphs stay Geist / Inter. */
+  --font-headline: 'Sora', 'Geist', 'Inter', sans-serif;
   --font-mono: 'Geist Mono', ui-monospace, 'SFMono-Regular', monospace;
   --breakpoint-xs: 430px;
   --breakpoint-laptop: 1080px;

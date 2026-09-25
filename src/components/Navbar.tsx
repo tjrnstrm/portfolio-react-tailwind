@@ -105,7 +105,7 @@ export function Navbar({ onToggleTheme, scrolled, ref }: NavbarProps) {
         top: pill ? "1.25rem" : "0",
         viewTransitionName: "site-nav",
       }}
-      className={`sticky z-50 mx-auto flex justify-between items-center border backdrop-blur-md text-zinc-900 dark:text-zinc-100 text-xs transition-all duration-1000 ease-in-out tracking-widest ${
+      className={`sticky z-50 mx-auto flex justify-between items-center border backdrop-blur-md text-zinc-900 dark:text-zinc-100 text-xs transition-all duration-1000 ease-in-out ${
         pill
           ? "py-3.5 px-6 sm:px-8 shadow-xl border-black/10 dark:border-white/20 bg-black/5 dark:bg-white/10 shadow-black/10 dark:shadow-black/50"
           : "py-5 px-6 sm:px-8 lg:px-12 border-transparent bg-transparent"
@@ -123,12 +123,12 @@ export function Navbar({ onToggleTheme, scrolled, ref }: NavbarProps) {
         </TransitionLink>
       )}
 
-      <div className="ml-auto flex items-center gap-1 uppercase">
+      <div className="ml-auto flex items-center gap-1">
         {!onAboutPage && (
           <TransitionLink
             to="/about"
-            className="nav-link font-light tracking-[0.3em]"
-            onClick={() => playSound("arrival")}
+            className="nav-link font-heading text-[13px] font-normal"
+            onClick={() => playSound("scan")}
           >
             About
           </TransitionLink>

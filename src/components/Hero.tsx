@@ -10,18 +10,22 @@ export function Hero() {
       <HeroBackground />
 
       <div className="relative z-10 flex flex-col items-center gap-10 sm:gap-12">
-        <p className="font-mono text-[10px] sm:text-[11px] tracking-[0.26em] uppercase text-zinc-500 dark:text-zinc-400">
-          Fullstack Developer · Stockholm
+        <p className="font-mono text-[11px] sm:text-xs tracking-[0.03em] text-zinc-500 dark:text-zinc-400">
+          Fullstack developer · Stockholm
         </p>
 
+        {/* The red dot hangs outside the word (zero width), so the word itself is
+            what is centred. The small lift evens out the space above and below
+            the lowercase letters, which sit low in their line box. */}
         <h1
           aria-label="Alexander Tjernström"
-          className="font-heading font-extralight uppercase leading-none tracking-[0.3em] -mr-[0.3em] text-[clamp(2rem,6.5vw,4.25rem)]"
+          className="font-headline -translate-y-[0.09em] font-extralight leading-none tracking-[0.02em] text-[clamp(2.5rem,7vw,5rem)]"
         >
-          Tjernström
+          tjrnstrm
+
         </h1>
 
-        <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 font-mono text-[10px] sm:text-[11px] tracking-[0.2em] uppercase text-zinc-500 dark:text-zinc-400">
+        <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 font-mono text-[11px] sm:text-xs tracking-[0.03em] text-zinc-500 dark:text-zinc-400">
           <span className="flex items-center gap-2 text-green-700 dark:text-green-500">
             <span className="relative flex h-1.5 w-1.5 shrink-0">
               <span className="status-ripple absolute inset-0 rounded-full" />

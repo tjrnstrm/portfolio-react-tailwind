@@ -1,4 +1,5 @@
 import { MdArrowOutward } from "react-icons/md";
+import { PAGE_HEADING } from "../lib/type";
 
 const stack = [
   "React",
@@ -21,15 +22,15 @@ const stack = [
 ];
 
 const labelClass =
-  "font-mono text-[10px] text-zinc-600 dark:text-zinc-400 tracking-[0.2em] uppercase";
+  "font-mono text-[11px] tracking-[0.03em] text-zinc-600 dark:text-zinc-400";
 
 export function About() {
   return (
     <section className="py-14 flex flex-col w-full">
       <div className="border-b border-zinc-300 dark:border-zinc-200/10 pb-5 mb-8 sm:mb-12">
         <p className={labelClass}>Who am I?</p>
-        <h2 className="font-heading text-[clamp(2rem,5.5vw,3.5rem)] font-light tracking-[0.15em] uppercase">
-          About<span className="text-red-500">.</span>
+        <h2 className={PAGE_HEADING}>
+          About.
         </h2>
       </div>
 

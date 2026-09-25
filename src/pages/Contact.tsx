@@ -10,6 +10,7 @@ import { MdArrowOutward } from 'react-icons/md';
 import { Footer } from '../components/Footer';
 import { HeroBackground } from '../components/HeroBackground';
 import { playSound } from '../lib/sound';
+import { PAGE_HEADING } from '../lib/type';
 import { clientProjects } from '../data/projects';
 
 const EMAIL = 'tjernstrom@proton.me';
@@ -23,7 +24,13 @@ const CATEGORIES: Category[] = [
   {
     id: 'website',
     label: 'Website',
-    types: ['Landing page', 'Company site', 'E-commerce', 'Booking site', 'Blog / CMS'],
+    types: [
+      'Landing page',
+      'Company site',
+      'E-commerce',
+      'Booking site',
+      'Blog / CMS',
+    ],
   },
   {
     id: 'portfolio',
@@ -40,12 +47,24 @@ const CATEGORIES: Category[] = [
   {
     id: 'app',
     label: 'App',
-    types: ['Web app / SaaS', 'Mobile app', 'Internal tool', 'Dashboard', 'Customer portal'],
+    types: [
+      'Web app / SaaS',
+      'Mobile app',
+      'Internal tool',
+      'Dashboard',
+      'Customer portal',
+    ],
   },
   {
     id: 'api',
     label: 'API',
-    types: ['REST API', 'GraphQL API', 'Integrations', 'Payments (Stripe)', 'Backend for an existing app'],
+    types: [
+      'REST API',
+      'GraphQL API',
+      'Integrations',
+      'Payments (Stripe)',
+      'Backend for an existing app',
+    ],
   },
   { id: 'other', label: 'Something else', types: [] },
   { id: 'unsure', label: 'Not sure yet', types: [] },
@@ -78,13 +97,13 @@ const STYLES: Choice[] = [
 const THEMES: Choice[] = [
   { id: 'light', label: 'Light' },
   { id: 'dark', label: 'Dark' },
-  { id: 'both', label: 'Both (toggleable)' },
+  { id: 'both', label: 'Both - Toggleable' },
 ];
 
 const LANGS: Choice[] = [
   { id: 'sv', label: 'Swedish' },
   { id: 'en', label: 'English' },
-  { id: 'both', label: 'Both (switchable)' },
+  { id: 'both', label: 'Both - Switchable' },
 ];
 
 const DOMAIN: Choice[] = [
@@ -165,7 +184,8 @@ const INITIAL: Brief = {
 const toggle = (list: string[], id: string) =>
   list.includes(id) ? list.filter((x) => x !== id) : [...list, id];
 
-const labelOf = (list: Choice[], id: string) => list.find((o) => o.id === id)?.label;
+const labelOf = (list: Choice[], id: string) =>
+  list.find((o) => o.id === id)?.label;
 
 /** Only answered questions make it into the brief; the three that always do come first. */
 function summarise(b: Brief): [string, string][] {
@@ -183,14 +203,18 @@ function summarise(b: Brief): [string, string][] {
     .join(' ');
   const feel = [
     labelOf(STYLES, b.style),
-    b.theme === 'both' ? 'light and dark (toggleable)' : labelOf(THEMES, b.theme)?.toLowerCase(),
+    b.theme === 'both'
+      ? 'light and dark (toggleable)'
+      : labelOf(THEMES, b.theme)?.toLowerCase(),
     b.lang === 'both'
       ? 'Swedish and English copy (switchable)'
       : labelOf(LANGS, b.lang) && `${labelOf(LANGS, b.lang)} copy`,
   ]
     .filter(Boolean)
     .join(', ');
-  const sections = SECTIONS.filter((s) => b.secs.includes(s.id)).map((s) => s.label);
+  const sections = SECTIONS.filter((s) => b.secs.includes(s.id)).map(
+    (s) => s.label,
+  );
 
   const rows: [string, string][] = [
     ['Project', project.length ? project.join('; ') : 'Not specified'],
@@ -224,10 +248,9 @@ function mailtoHref(b: Brief, rows: [string, string][]) {
 }
 
 const monoLabel =
-  'font-mono text-[10px] tracking-[0.2em] uppercase text-zinc-600 dark:text-zinc-400';
+  'font-mono text-[11px] tracking-[0.03em] text-zinc-600 dark:text-zinc-400';
 
-const fieldLabel =
-  'text-[13px] font-medium text-zinc-600 dark:text-zinc-400';
+const fieldLabel = 'text-[13px] font-medium text-zinc-600 dark:text-zinc-400';
 
 const pillFocus =
   'focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-black/30 dark:focus-visible:outline-white/40';
@@ -305,7 +328,16 @@ type ChoicesProps = {
 };
 
 /** A labelled row of chips: checkboxes by default, radios with `radio`. */
-function Choices({ name, options, selected, onPick, size, radio, label, stagger }: ChoicesProps) {
+function Choices({
+  name,
+  options,
+  selected,
+  onPick,
+  size,
+  radio,
+  label,
+  stagger,
+}: ChoicesProps) {
   const labelId = `${name}-label`;
   return (
     <div className="flex flex-col gap-2.5">
@@ -332,7 +364,11 @@ function Choices({ name, options, selected, onPick, size, radio, label, stagger 
             />
           );
           return stagger ? (
-            <span key={o.id} className="fold-item" style={{ '--i': i } as CSSProperties}>
+            <span
+              key={o.id}
+              className="fold-item"
+              style={{ '--i': i } as CSSProperties}
+            >
               {chip}
             </span>
           ) : (
@@ -361,7 +397,10 @@ function Question({
       aria-labelledby={id}
       className="reveal glass flex min-w-0 flex-col gap-[22px] rounded-[28px] p-5 sm:p-9"
     >
-      <h2 id={id} className="text-2xl font-normal tracking-tight sm:text-[28px]">
+      <h2
+        id={id}
+        className="font-headline text-[22px] font-light tracking-[-0.01em] sm:text-[26px]"
+      >
         {title}
       </h2>
       {hint && (
@@ -420,8 +459,10 @@ function Services() {
               i === SERVICES.length - 1 ? 'border-b' : ''
             }`}
           >
-            <dt className="text-[13px] font-medium tracking-[0.15em] uppercase">{k}</dt>
-            <dd className="text-sm leading-normal text-zinc-600 dark:text-zinc-400">{v}</dd>
+            <dt className="text-[14px] font-medium">{k}</dt>
+            <dd className="text-sm leading-normal text-zinc-600 dark:text-zinc-400">
+              {v}
+            </dd>
           </div>
         ))}
       </dl>
@@ -480,7 +521,7 @@ function Details() {
         </a>
       </div>
 
-      <div className="flex flex-col gap-2 font-mono text-[10px] tracking-[0.2em] uppercase text-zinc-600 dark:text-zinc-400">
+      <div className="flex flex-col gap-2 font-mono text-[11px] tracking-[0.03em] text-zinc-600 dark:text-zinc-400">
         <span>Prefer plain email?</span>
         <a
           href={`mailto:${EMAIL}`}
@@ -527,7 +568,8 @@ export function Contact() {
   useEffect(() => {
     const el = panelRef.current;
     if (!el) return;
-    const update = () => el.style.setProperty('--panel-h', `${el.offsetHeight}px`);
+    const update = () =>
+      el.style.setProperty('--panel-h', `${el.offsetHeight}px`);
     update();
     const ro = new ResizeObserver(update);
     ro.observe(el);
@@ -550,7 +592,9 @@ export function Contact() {
     if (missing.name || missing.email) {
       playSound('error');
       setShowErrors(true);
-      const first = e.currentTarget.elements.namedItem(missing.name ? 'name' : 'email');
+      const first = e.currentTarget.elements.namedItem(
+        missing.name ? 'name' : 'email',
+      );
       if (first instanceof HTMLElement) first.focus();
       return;
     }
@@ -570,7 +614,6 @@ export function Contact() {
     }
   };
 
-
   return (
     // Pulled up under the navbar so the code rain behind the glass runs to the top
     // edge; the content starts 1.5rem below it (the pill state of the navbar ends
@@ -582,11 +625,14 @@ export function Contact() {
       }}
       className="relative isolate overflow-clip px-4 font-heading sm:px-8 lg:px-12"
     >
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -z-10"
+      >
         <HeroBackground variant="page" />
       </div>
 
-      <div className="grid gap-y-8 lg:mb-5 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-x-6">
+      <div className="grid gap-y-8 lg:mb-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-x-6">
         {/* Pitch. On desktop this is one frosted panel that holds the pitch,
             services, client work, GitHub and email, and follows the scroll while
             the form is filled in (see .pitch-sticky in index.css). */}
@@ -595,11 +641,11 @@ export function Contact() {
           className="reveal pitch-sticky flex flex-col gap-10 lg:glass lg:col-start-1 lg:row-start-1 lg:self-start lg:rounded-[28px] lg:p-10"
         >
           <section className="flex flex-col gap-7">
-            <p className="-mb-3 font-mono text-[11px] tracking-[0.26em] uppercase text-zinc-500 dark:text-zinc-400">
+            <p className="-mb-3 font-mono text-xs tracking-[0.03em] text-zinc-500 dark:text-zinc-400">
               Free consultation
             </p>
-            <h1 className="text-4xl leading-[1.05] font-extralight tracking-[0.1em] uppercase wrap-break-word sm:text-6xl lg:text-[clamp(2.75rem,4.2vw,4.5rem)]">
-              Tell me what to build<span className="text-red-500">.</span>
+            <h1 className={PAGE_HEADING}>
+              Tell me what to build.
             </h1>
             <p className="max-w-[46ch] text-base leading-relaxed text-zinc-700 sm:text-[17px] dark:text-zinc-300">
               Websites, apps and APIs, from first call to launch. Fill in the
@@ -620,13 +666,17 @@ export function Contact() {
           ref={mainRef}
           className="flex scroll-mt-24 flex-col gap-5 lg:col-start-2 lg:row-start-1"
         >
-          <div className="reveal flex flex-col justify-between gap-1 px-2 pb-1 font-mono text-[10px] tracking-[0.2em] uppercase text-zinc-600 sm:flex-row sm:items-center lg:pt-2 dark:text-zinc-400">
+          <div className="reveal flex flex-col justify-between gap-1 px-2 pb-1 font-mono text-[11px] tracking-[0.03em] text-zinc-600 sm:flex-row sm:items-center lg:pt-2 dark:text-zinc-400">
             <span>Project brief</span>
             <span>{STEPS} steps · no cost · no commitment</span>
           </div>
 
           {!done ? (
-            <form onSubmit={onSubmit} noValidate className="flex flex-col gap-5">
+            <form
+              onSubmit={onSubmit}
+              noValidate
+              className="flex flex-col gap-5"
+            >
               <Question
                 id="q-build"
                 title="What are we building?"
@@ -646,7 +696,10 @@ export function Contact() {
                       name={`type-${c.id}`}
                       size="sm"
                       label={`${c.label}: what kind?`}
-                      options={c.types.map((t) => ({ id: `${c.id}:${t}`, label: t }))}
+                      options={c.types.map((t) => ({
+                        id: `${c.id}:${t}`,
+                        label: t,
+                      }))}
                       selected={brief.types}
                       onPick={(id) => set({ types: toggle(brief.types, id) })}
                     />
@@ -671,7 +724,11 @@ export function Contact() {
                 hint="So I know who I am building for, and where to reply. Fields marked * are required."
               >
                 <div className="grid gap-x-5 gap-y-[18px] sm:grid-cols-2">
-                  <Field label="Your name" required flagged={showErrors && missing.name}>
+                  <Field
+                    label="Your name"
+                    required
+                    flagged={showErrors && missing.name}
+                  >
                     <input
                       type="text"
                       name="name"
@@ -683,7 +740,11 @@ export function Contact() {
                       className="glass-field"
                     />
                   </Field>
-                  <Field label="Email" required flagged={showErrors && missing.email}>
+                  <Field
+                    label="Email"
+                    required
+                    flagged={showErrors && missing.email}
+                  >
                     <input
                       type="email"
                       name="email"
@@ -733,7 +794,10 @@ export function Contact() {
                       className="glass-field"
                     />
                   </Field>
-                  <Field label="Who are your customers?" className="sm:col-span-2">
+                  <Field
+                    label="Who are your customers?"
+                    className="sm:col-span-2"
+                  >
                     <input
                       type="text"
                       value={brief.audience}
@@ -826,13 +890,21 @@ export function Contact() {
                 <Fold open={brief.domain === 'have' || brief.domain === 'want'}>
                   <Field
                     className="max-w-lg"
-                    label={brief.domain === 'want' ? 'Any names in mind?' : 'Which domain?'}
+                    label={
+                      brief.domain === 'want'
+                        ? 'Any names in mind?'
+                        : 'Which domain?'
+                    }
                   >
                     <input
                       type="text"
                       value={brief.domainValue}
                       onChange={(e) => set({ domainValue: e.target.value })}
-                      placeholder={brief.domain === 'want' ? 'yourcompany.se, yourcompany.com' : 'yourcompany.se'}
+                      placeholder={
+                        brief.domain === 'want'
+                          ? 'yourcompany.se, yourcompany.com'
+                          : 'yourcompany.se'
+                      }
                       className="glass-field"
                     />
                   </Field>
@@ -849,7 +921,11 @@ export function Contact() {
                 <Fold open={brief.mail === 'have' || brief.mail === 'want'}>
                   <Field
                     className="max-w-lg"
-                    label={brief.mail === 'want' ? 'Which addresses do you need?' : 'Which provider?'}
+                    label={
+                      brief.mail === 'want'
+                        ? 'Which addresses do you need?'
+                        : 'Which provider?'
+                    }
                   >
                     <input
                       type="text"
@@ -910,15 +986,15 @@ export function Contact() {
             </form>
           ) : (
             <div className="glass flex flex-col gap-7 rounded-[28px] p-6 sm:p-10">
-              <p className="font-mono text-[11px] tracking-[0.2em] uppercase text-green-700 dark:text-green-500">
+              <p className="font-mono text-xs tracking-[0.03em] text-green-700 dark:text-green-500">
                 One step left
               </p>
               <h2
                 ref={doneHeadingRef}
                 tabIndex={-1}
-                className="text-[clamp(2.5rem,6vw,4rem)] font-extralight tracking-[0.1em] uppercase outline-none"
+                className={`${PAGE_HEADING} outline-none`}
               >
-                Hit send<span className="text-red-500">.</span>
+                Hit send.
               </h2>
               <p className="max-w-[52ch] leading-relaxed text-zinc-600 dark:text-zinc-400">
                 Your mail app should have opened with the brief filled in. Send
@@ -939,7 +1015,9 @@ export function Contact() {
                     className="grid gap-1 border-t border-zinc-900/10 py-3.5 sm:grid-cols-[8.5rem_minmax(0,1fr)] sm:gap-6 dark:border-white/10"
                   >
                     <dt className={`${monoLabel} sm:text-[11px]`}>{k}</dt>
-                    <dd className="text-[15px] wrap-break-word whitespace-pre-wrap">{v}</dd>
+                    <dd className="text-[15px] wrap-break-word whitespace-pre-wrap">
+                      {v}
+                    </dd>
                   </div>
                 ))}
               </dl>
@@ -971,7 +1049,6 @@ export function Contact() {
             </div>
           )}
         </div>
-
       </div>
 
       {/* Mobile only: on desktop all of this lives in the sticky panel. */}

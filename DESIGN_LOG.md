@@ -86,7 +86,7 @@ the Changelog. The "Current state" section is always rewritten to match reality.
 
 - **The wordmark and the Work link are gone** (2026-09-25). The home navbar is
   now just `About` (a `TransitionLink` to `/about`, `tracking-[0.3em]`, no hover
-  background: the text softens to zinc-600 / zinc-400; plays `arrival`), the
+  background: the text softens to zinc-600 / zinc-400; plays `scan`), the
   `Start a project` glass pill (`CtaPill`, red arrow) and the theme toggle, all
   on the right. On `/about` the About link is hidden and a back arrow (like the
   contact page's) sits on the left. The nav has `view-transition-name:
@@ -153,7 +153,7 @@ the Changelog. The "Current state" section is always rewritten to match reality.
   anything. `useSoundEnabled()` / `setSoundEnabled()` drive the mute button in
   the contact navbar. Used so far: `toggle` on every chip, `success` on Send and
   Copy brief, `arrival` when navigating to the contact page, `bloom` on the
-  contact navbar's back arrow (and the About page's), `arrival` on the About link, `page` on the theme toggle (volume 0.35), `error` when Send is
+  contact navbar's back arrow (and the About page's), `scan` on the About link, `page` on the theme toggle (volume 0.35), `error` when Send is
   pressed with a mandatory field missing, and a quiet `tick` (volume 0.1) when
   the mouse enters a button (`startHoverSounds()`: one delegated
   `pointerover` listener over `button`, `.glass-pill`, `.chip` and `nav a`;
@@ -197,6 +197,32 @@ the Changelog. The "Current state" section is always rewritten to match reality.
   same content sits below the form on mobile.
 
 ### Type / label system (page-wide)
+
+**Update 2026-09-25: no more capitals.** Everything is now sentence case (a
+capital first letter, the rest as you'd write it): no `uppercase`, and the wide
+letter-spacing that suited capitals is gone. Display type (hero name, headings)
+has a hair of negative tracking (`-0.01em` to `-0.02em`); the small Geist Mono
+labels have `0.03em` and are 11 to 12px (was 10 to 11px in capitals). The hero
+name reads "tjrnstrm" (the brand, lowercase, with a red dot). Where this section
+below says "uppercase" or `tracking-[0.3em]`, read it as superseded.
+
+**Sora for the big type only.** `--font-headline` (`font-headline`) is Sora, used
+for the hero name, the About and closing-band headings, the contact headline
+and question titles, and "Hit send.". Buttons, chips, the navbar and
+paragraphs stay Geist / Inter, and the small labels Geist Mono. Sora is wide, so
+those headings are sized a little smaller than the Geist ones were (the
+contact headline is `clamp(2.5rem, 3.7vw, 3.75rem)` on wide screens).
+
+**Red.** The accent is used sparingly: the small arrows on actions, and the
+asterisk of a required field left empty (as an error). Not on headings, not on
+the hero name.
+
+**Hero centring.** The red dot after "tjrnstrm" is a zero-width inline-block
+that hangs past the word, so the word itself is centred (measured: word,
+kicker and status row all centre on the viewport centre). The name is lifted
+`-0.09em` so the space above and below the lowercase letters is equal
+(measured 66 / 68px on desktop); lowercase sits low in its line box, which made
+the name look pushed toward the status row.
 
 Deliberate split so the chrome reads technical and the prose reads human:
 
@@ -488,9 +514,9 @@ _Status: **A picked and shipped** (take two) — airy wordmark, no red period
     `/about` page, removed the wordmark and the Work link from the navbar,
     removed the Scroll indicator (and the now dead `See the work ↓` link and
     the unused `scroll-line` / `marquee` keyframes).
-38. **Contact page:** 20px between the content and the footer line (the form
-    used to end flush with it); the sticky panel's bottom margin is the same
-    20px.
+38. **Contact page:** 40px between the content and the footer line (the form
+    used to end flush with it, then 20px looked too tight); the sticky panel's
+    bottom margin is the same 40px.
 39. **Home is one screen:** the closing "Tell me what to build" band moved to
     the About page; the footer now lies transparently over the hero (no
     separator, home only); the navbar no longer pills on scroll on home.
@@ -498,6 +524,15 @@ _Status: **A picked and shipped** (take two) — airy wordmark, no red period
     its hover background (text softens instead) and plays `arrival`.
 41. **Theme follows the system** unless the visitor toggles it (saved as
     `theme-choice`).
+42. **Sentence case site-wide** (was uppercase with 0.1 to 0.3em tracking): hero,
+    headings, labels, navbar, footer, buttons, contact page. The contact page
+    footer gap is 40px.
+43. **Sora for the big type only**, the red dot after the lowercase "tjrnstrm",
+    hero centring fixes (hanging dot, optical lift), and `scan` on the About link.
+44. **Red is now only for action arrows and error stars.** The red full stops on
+    headings are gone (they were plain periods now), and so is the hero dot. The
+    About and contact headings share one class string (`PAGE_HEADING` in
+    `src/lib/type.ts`), so they are the same size at every width.
 
 ---
 
