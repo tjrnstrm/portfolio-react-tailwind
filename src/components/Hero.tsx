@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { TransitionLink } from './TransitionLink';
 import { HeroBackground } from './HeroBackground';
 
 export function Hero() {
@@ -44,7 +44,7 @@ export function Hero() {
             </span>
             Open to work
           </span>
-          <Link
+          <TransitionLink
             to="/contact"
             className="group inline-flex items-center gap-2 text-zinc-900 dark:text-zinc-100"
           >
@@ -57,7 +57,7 @@ export function Hero() {
             >
               →
             </span>
-          </Link>
+          </TransitionLink>
         </div>
       </div>
 

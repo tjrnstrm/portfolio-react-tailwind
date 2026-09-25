@@ -8,8 +8,19 @@ const COL_W = FONT * 1.35;
 
 const rndGlyph = () => GLYPHS[(Math.random() * GLYPHS.length) | 0];
 
-/** Code rain scoped to the hero section — scrolls away with it. */
-export function HeroBackground() {
+const HERO_MASK =
+  'linear-gradient(to bottom, #000 0%, rgba(0,0,0,0.12) 38%, rgba(0,0,0,0.12) 55%, #000 72%, transparent 100%)';
+const PAGE_MASK =
+  'linear-gradient(to bottom, transparent 0%, #000 14%, #000 86%, transparent 100%)';
+
+/**
+ * Code rain. `hero` (default) fills its section and scrolls away with it;
+ * `page` is a fixed, viewport-sized layer that stays put while the page
+ * (and any glass on it) scrolls over it.
+ */
+export function HeroBackground({ variant = 'hero' }: { variant?: 'hero' | 'page' }) {
+  // On the page variant the rain sits behind blurred glass, so it needs more punch.
+  const boost = variant === 'page' ? 2.4 : 1;
   const ref = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
@@ -63,8 +74,8 @@ export function HeroBackground() {
       const d = isDark();
       const head = d ? '214,220,255' : '35,42,110';
       const tail = d ? '138,152,255' : '74,86,165';
-      const headA = d ? 0.34 : 0.28;
-      const tailA = d ? 0.15 : 0.12;
+      const headA = (d ? 0.34 : 0.28) * boost;
+      const tailA = (d ? 0.15 : 0.12) * boost;
 
       for (let i = 0; i < cols.length; i++) {
         const c = cols[i];
@@ -124,21 +135,20 @@ export function HeroBackground() {
       io.disconnect();
       cancelAnimationFrame(raf);
     };
-  }, []);
+  }, [boost]);
 
   return (
     <canvas
       ref={ref}
       aria-hidden="true"
-      className="pointer-events-none absolute inset-0 z-0 h-full w-full"
+      className={`pointer-events-none inset-0 z-0 h-full w-full ${variant === 'page' ? 'fixed' : 'absolute'}`}
       style={{
-        // Fades in at the top, dims behind the centred text, returns for the
-        // lower third, then dissolves to nothing before the fold — no marquee
-        // to cap the clipped bottom edge, so the rain has to end softly itself.
-        maskImage:
-          'linear-gradient(to bottom, #000 0%, rgba(0,0,0,0.12) 38%, rgba(0,0,0,0.12) 55%, #000 72%, transparent 100%)',
-        WebkitMaskImage:
-          'linear-gradient(to bottom, #000 0%, rgba(0,0,0,0.12) 38%, rgba(0,0,0,0.12) 55%, #000 72%, transparent 100%)',
+        // Hero: fades in at the top, dims behind the centred text, returns for
+        // the lower third, then dissolves to nothing before the fold — no
+        // marquee to cap the clipped bottom edge, so the rain has to end
+        // softly itself. Page: just soft top and bottom edges.
+        maskImage: variant === 'page' ? PAGE_MASK : HERO_MASK,
+        WebkitMaskImage: variant === 'page' ? PAGE_MASK : HERO_MASK,
       }}
     />
   );

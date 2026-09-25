@@ -18,7 +18,7 @@ export function ContactCta() {
             Start the brief
           </CtaPill>
           <p className="font-mono text-[10px] tracking-[0.15em] uppercase text-zinc-500">
-            Free consultation · 5 questions · no commitment
+            Free consultation · 6 steps · no commitment
           </p>
         </div>
       </div>

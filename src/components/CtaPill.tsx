@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Link } from 'react-router-dom';
+import { TransitionLink } from './TransitionLink';
 
 const SIZE = {
   sm: 'gap-2 px-4 py-2.5 text-xs',
@@ -19,7 +19,7 @@ type CtaPillProps = {
  */
 export function CtaPill({ to, size = 'sm', children }: CtaPillProps) {
   return (
-    <Link
+    <TransitionLink
       to={to}
       className={`glass-pill group inline-flex items-center rounded-full font-normal tracking-[0.3em] whitespace-nowrap text-zinc-900 uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black/25 dark:text-zinc-100 dark:focus-visible:outline-white/30 ${SIZE[size]}`}
     >
@@ -30,6 +30,6 @@ export function CtaPill({ to, size = 'sm', children }: CtaPillProps) {
       >
         →
       </span>
-    </Link>
+    </TransitionLink>
   );
 }

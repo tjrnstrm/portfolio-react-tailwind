@@ -105,7 +105,7 @@ html {
 }
 
 /* ---------------------------------------------------------------------------
-   Glass ("Frost"): frosted surfaces over slow, blurred colour blobs.
+   Glass ("Frost"): frosted surfaces.
    Light = Frost as designed; dark is its night-time counterpart. Everything
    reads from these tokens so a component only has to name the class.
    ------------------------------------------------------------------------- */
@@ -121,11 +121,14 @@ html {
   --glass-chip-bg: rgb(255 255 255 / 0.7);
   --glass-chip-hi: rgb(255 255 255 / 0.95);
   --glass-chip-shadow: 0 1px 2px rgb(15 23 42 / 0.05);
-  --glass-chip-on-bg: rgb(255 255 255 / 0.96);
-  --glass-chip-on-edge: rgb(24 24 27 / 0.32);
-  --glass-chip-on-glow: rgb(15 23 42 / 0.1);
-  --glass-mark: rgb(15 23 42 / 0.3);
-  --glass-mark-on: #dc2626;
+  --chip-bg: rgb(15 23 42 / 0.06);
+  --chip-bg-hover: rgb(15 23 42 / 0.1);
+  --chip-shadow: inset 0 1px 0 rgb(255 255 255 / 0.55), 0 1px 2px rgb(15 23 42 / 0.07);
+  --chip-on-bg: #fff;
+  --chip-on-fg: #18181b;
+  --chip-on-shadow:
+    inset 0 1px 0 #fff, 0 1px 2px rgb(15 23 42 / 0.1), 0 12px 26px rgb(15 23 42 / 0.16);
+  --chip-on-lift: -1px;
 
   --glass-field-bg: rgb(255 255 255 / 0.75);
   --glass-field-shadow: inset 0 1px 2px rgb(15 23 42 / 0.04);
@@ -133,18 +136,11 @@ html {
   --glass-focus: rgb(24 24 27 / 0.45);
   --glass-focus-ring: rgb(24 24 27 / 0.08);
 
-  --glass-pill-bg: rgb(255 255 255 / 0.72);
-  --glass-pill-bg-hover: rgb(255 255 255 / 0.95);
-  --glass-pill-hi: rgb(255 255 255 / 0.95);
-  --glass-pill-shadow: 0 1px 2px rgb(15 23 42 / 0.06), 0 6px 18px rgb(15 23 42 / 0.08);
-  --glass-primary-bg: rgb(24 24 27 / 0.9);
-  --glass-primary-bg-hover: rgb(24 24 27 / 1);
-  --glass-primary-fg: #fafafa;
-  --glass-primary-shadow: 0 8px 22px rgb(24 24 27 / 0.26);
+  --glass-pill-bg: rgb(15 23 42 / 0.07);
+  --glass-pill-bg-hover: rgb(15 23 42 / 0.11);
+  --glass-pill-hi: rgb(255 255 255 / 0.55);
+  --glass-pill-shadow: 0 1px 2px rgb(15 23 42 / 0.07);
 
-  --blob-a: #c7dbff;
-  --blob-b: #ffdccc;
-  --blob-c: #ddd5ff;
 }
 
 .dark {
@@ -159,11 +155,15 @@ html {
   --glass-chip-bg: rgb(255 255 255 / 0.06);
   --glass-chip-hi: rgb(255 255 255 / 0.12);
   --glass-chip-shadow: 0 1px 2px rgb(0 0 0 / 0.3);
-  --glass-chip-on-bg: rgb(255 255 255 / 0.15);
-  --glass-chip-on-edge: rgb(255 255 255 / 0.4);
-  --glass-chip-on-glow: rgb(0 0 0 / 0.35);
-  --glass-mark: rgb(255 255 255 / 0.3);
-  --glass-mark-on: #ef4444;
+  --chip-bg: rgb(255 255 255 / 0.07);
+  --chip-bg-hover: rgb(255 255 255 / 0.12);
+  --chip-shadow: inset 0 1px 0 rgb(255 255 255 / 0.12), 0 1px 2px rgb(0 0 0 / 0.3);
+  --chip-on-bg: rgb(255 255 255 / 0.2);
+  --chip-on-fg: #fff;
+  --chip-on-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.4), 0 8px 26px rgb(0 0 0 / 0.45),
+    0 0 24px rgb(255 255 255 / 0.06);
+  --chip-on-lift: 0px;
 
   --glass-field-bg: rgb(255 255 255 / 0.06);
   --glass-field-shadow: inset 0 1px 2px rgb(0 0 0 / 0.35);
@@ -175,17 +175,9 @@ html {
   --glass-pill-bg-hover: rgb(255 255 255 / 0.16);
   --glass-pill-hi: rgb(255 255 255 / 0.16);
   --glass-pill-shadow: 0 1px 2px rgb(0 0 0 / 0.4), 0 6px 18px rgb(0 0 0 / 0.3);
-  --glass-primary-bg: rgb(255 255 255 / 0.17);
-  --glass-primary-bg-hover: rgb(255 255 255 / 0.25);
-  --glass-primary-fg: #fafafa;
-  --glass-primary-shadow: 0 8px 26px rgb(0 0 0 / 0.45);
-
-  --blob-a: rgb(99 102 241 / 0.4);
-  --blob-b: rgb(244 63 94 / 0.17);
-  --blob-c: rgb(139 92 246 / 0.32);
 }
 
-.glass {
+@utility glass {
   background-color: var(--glass-bg);
   background-image: linear-gradient(135deg, var(--glass-sheen), transparent 45%);
   border: 1px solid var(--glass-edge);
@@ -194,18 +186,23 @@ html {
   backdrop-filter: blur(28px) saturate(180%);
 }
 
+/* The pitch panel follows the scroll on desktop screens 900px tall or more. It
+   is taller than the screen, so it pins by its bottom edge (--panel-h is set in
+   Contact.tsx): the headline scrolls away and the rest stays in view. If the
+   screen is tall enough to hold it all, it pins by the top instead. */
+@media (min-width: 1024px) and (min-height: 900px) {
+  .pitch-sticky {
+    position: sticky;
+    top: min(calc(var(--nav-h, 74px) + 1rem), calc(100dvh - var(--panel-h, 0px) - 1rem));
+  }
+}
+
 .glass-tag {
   background: var(--glass-chip-bg);
   border: 1px solid var(--glass-line);
   box-shadow: inset 0 1px 0 var(--glass-chip-hi), var(--glass-chip-shadow);
   -webkit-backdrop-filter: blur(14px) saturate(180%);
   backdrop-filter: blur(14px) saturate(180%);
-}
-
-.glass-badge {
-  background: var(--glass-chip-bg);
-  border: 1px solid var(--glass-line);
-  box-shadow: inset 0 1px 0 var(--glass-chip-hi);
 }
 
 /* Pill buttons/links: no border, the edge is a top highlight + soft shadow. */
@@ -224,14 +221,6 @@ html {
 }
 .glass-pill:active {
   transform: scale(0.985);
-}
-.glass-pill--primary {
-  background: var(--glass-primary-bg);
-  color: var(--glass-primary-fg);
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.28), var(--glass-primary-shadow);
-}
-.glass-pill--primary:hover {
-  background: var(--glass-primary-bg-hover);
 }
 
 .glass-field {
@@ -261,117 +250,207 @@ textarea.glass-field {
   resize: vertical;
 }
 
-/* Selection chip: a real checkbox/radio inside, styled by :has(:checked). */
+/* Selection chip: a real checkbox/radio inside, styled by :has(:checked).
+   No border; selected shows a bare check (no circle, no colour). Unselected chips
+   and buttons carry a faint tint (lighter than the card in dark, darker in light);
+   the selected chip is the brightest thing: bright glass in dark, white in light. */
 .chip {
   display: inline-flex;
   align-items: center;
-  gap: 0.625rem;
-  padding: 0 1.25rem 0 0.875rem;
+  padding: 0 1.25rem;
   border-radius: 9999px;
-  border: 1px solid var(--glass-line);
-  background: var(--glass-chip-bg);
-  box-shadow: inset 0 1px 0 var(--glass-chip-hi), var(--glass-chip-shadow);
+  background: var(--chip-bg);
+  box-shadow: var(--chip-shadow);
   font-weight: 500;
   text-align: left;
   cursor: pointer;
   user-select: none;
   transition:
-    background-color 150ms,
-    border-color 150ms,
-    box-shadow 150ms;
+    background-color 180ms,
+    box-shadow 180ms,
+    color 180ms,
+    transform 180ms;
 }
-.chip:hover {
-  border-color: var(--glass-line-strong);
+.chip:hover:not(:has(:checked)) {
+  background: var(--chip-bg-hover);
+}
+.chip-tick {
+  display: grid;
+  place-items: center;
+  width: 0;
+  margin-right: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition:
+    width 180ms,
+    margin 180ms,
+    opacity 180ms;
+}
+.chip:has(:checked) .chip-tick {
+  width: 14px;
+  margin-right: 8px;
+  opacity: 1;
 }
 .chip:has(:checked) {
-  background: var(--glass-chip-on-bg);
-  border-color: var(--glass-chip-on-edge);
-  box-shadow: inset 0 1px 0 var(--glass-chip-hi), 0 4px 14px var(--glass-chip-on-glow);
+  padding-left: 1rem;
+  background: var(--chip-on-bg);
+  color: var(--chip-on-fg);
+  box-shadow: var(--chip-on-shadow);
+  transform: translateY(var(--chip-on-lift));
 }
 .chip:has(:focus-visible) {
   outline: 2px solid var(--glass-focus);
   outline-offset: 3px;
 }
-.chip-mark {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: 1.25rem;
-  height: 1.25rem;
-  border-radius: 9999px;
-  border: 1.5px solid var(--glass-mark);
-  color: #fff;
+
+/* Unfold: follow-up questions open with a height + fade animation, and the
+   chips inside fan out one after another. A closed fold cancels its own
+   flex-gap (22px, the Question gap) so it leaves no empty space. */
+.fold {
+  display: grid;
+  grid-template-rows: 0fr;
+  margin-top: -22px;
   transition:
-    background-color 150ms,
-    border-color 150ms;
+    grid-template-rows 360ms cubic-bezier(0.22, 1, 0.36, 1),
+    margin-top 360ms cubic-bezier(0.22, 1, 0.36, 1);
 }
-.chip-mark svg {
+.fold.open {
+  grid-template-rows: 1fr;
+  margin-top: 0;
+}
+/* The padding leaves room for chip shadows, which overflow:hidden would clip;
+   the negative margins cancel it out so layout is unaffected. */
+.fold-in {
+  min-height: 0;
+  overflow: hidden;
+  padding: 8px 24px 34px;
+  margin: -8px -24px -34px;
   opacity: 0;
-  transform: scale(0.5);
+  visibility: hidden;
   transition:
-    opacity 150ms,
-    transform 150ms;
+    opacity 240ms,
+    visibility 0s linear 360ms;
 }
-.chip:has(:checked) .chip-mark {
-  background: var(--glass-mark-on);
-  border-color: var(--glass-mark-on);
-}
-.chip:has(:checked) .chip-mark svg {
+.fold.open > .fold-in {
   opacity: 1;
-  transform: scale(1);
+  visibility: visible;
+  transition:
+    opacity 260ms 60ms,
+    visibility 0s;
+}
+.fold-item {
+  display: inline-flex;
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 200ms,
+    transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.fold.open .fold-item {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 300ms calc(var(--i) * 40ms + 100ms),
+    transform 340ms calc(var(--i) * 40ms + 100ms) cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* The colour behind the glass. Slow drift is what makes it feel liquid. */
-.blob {
-  position: absolute;
-  border-radius: 9999px;
-  filter: blur(100px);
-  will-change: transform;
-  animation: blob-drift 28s ease-in-out infinite alternate;
-}
-.blob-a {
-  top: -140px;
-  right: -180px;
-  width: min(640px, 90vw);
-  height: min(640px, 90vw);
-  background: var(--blob-a);
-}
-.blob-b {
-  top: 40%;
-  left: -160px;
-  width: min(540px, 80vw);
-  height: min(540px, 80vw);
-  background: var(--blob-b);
-  animation-duration: 34s;
-  animation-delay: -9s;
-}
-.blob-c {
-  bottom: 12%;
-  right: -120px;
-  width: min(600px, 85vw);
-  height: min(600px, 85vw);
-  background: var(--blob-c);
-  animation-duration: 40s;
-  animation-delay: -18s;
-}
-@keyframes blob-drift {
-  0% {
-    transform: translate3d(0, 0, 0) scale(1);
+@media (prefers-reduced-motion: reduce) {
+  .glass-pill,
+  .chip,
+  .chip-tick,
+  .fold,
+  .fold-in,
+  .fold-item {
+    transition: none !important;
   }
-  50% {
-    transform: translate3d(-40px, 50px, 0) scale(1.08);
+}
+
+/* Page transitions (View Transitions API, see TransitionLink.tsx).
+   To the contact page: the old page fades out (240ms), then the new page's
+   cards fade up one after another, 110ms apart (.reveal, below). Back home: the old page
+   fades out and the home page rises into place. The navbar has its own name so
+   it stays put instead of fading with the page. */
+::view-transition-group(root) {
+  animation-duration: 0.01ms;
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  mix-blend-mode: normal;
+}
+::view-transition-old(root) {
+  animation: vt-fade-out 240ms ease-in both;
+}
+html.vt-forward::view-transition-new(root) {
+  animation: vt-appear 60ms linear 220ms both;
+}
+html.vt-back::view-transition-new(root) {
+  animation: vt-rise 480ms cubic-bezier(0.22, 1, 0.36, 1) 160ms both;
+}
+/* Short, so the navbar's two states (scrolled pill, top bar) barely overlap. */
+::view-transition-group(site-nav) {
+  animation-duration: 220ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+@keyframes vt-fade-out {
+  to {
+    opacity: 0;
   }
-  100% {
-    transform: translate3d(30px, -30px, 0) scale(0.94);
+}
+@keyframes vt-appear {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes vt-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Staggered reveal for the contact page's cards. Arriving through a page
+   transition they wait for the old page to fade out first (html.reveal-delay,
+   html.reveal-wait; both are set and cleared in TransitionLink.tsx). */
+.reveal {
+  animation: reveal-up 700ms cubic-bezier(0.33, 1, 0.68, 1) backwards;
+  animation-delay: calc(var(--reveal-base, 0ms) + var(--i, 0) * 110ms);
+}
+html.reveal-delay {
+  --reveal-base: 220ms;
+}
+html.reveal-wait .reveal {
+  animation-play-state: paused;
+}
+form > .reveal:nth-child(1) {
+  --i: 1;
+}
+form > .reveal:nth-child(2) {
+  --i: 2;
+}
+form > .reveal:nth-child(n + 3) {
+  --i: 3;
+}
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .blob {
-    animation: none;
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
   }
-  .glass-pill {
-    transition: none;
+  .reveal {
+    animation: none;
   }
 }
 

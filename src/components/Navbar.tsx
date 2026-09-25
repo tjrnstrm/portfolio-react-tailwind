@@ -1,7 +1,8 @@
 import type { Ref } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { FiSun, FiMoon } from "react-icons/fi";
 import { CtaPill } from "./CtaPill";
+import { TransitionLink } from "./TransitionLink";
 
 type NavbarProps = {
   onToggleTheme: () => void;
@@ -24,6 +25,7 @@ export function Navbar({ onToggleTheme, scrolled, ref }: NavbarProps) {
         borderRadius: scrolled ? "100px" : "0",
         maxWidth: scrolled ? "min(1024px, calc(100% - 1rem))" : "100%",
         top: scrolled ? "1.25rem" : "0",
+        viewTransitionName: "site-nav",
       }}
       className={`sticky z-50 mx-auto flex justify-between items-center border backdrop-blur-md text-zinc-900 dark:text-zinc-100 text-xs transition-all duration-1000 ease-in-out tracking-widest ${
         scrolled
@@ -31,20 +33,20 @@ export function Navbar({ onToggleTheme, scrolled, ref }: NavbarProps) {
           : "py-5 px-6 sm:px-8 lg:px-12 border-transparent bg-transparent"
       }`}
     >
-      <Link
+      <TransitionLink
         to="/"
         aria-label="Tjernström — back to top"
         className="font-heading text-sm font-extralight uppercase tracking-[0.3em] leading-none whitespace-nowrap transition-opacity hover:opacity-70"
       >
         Tjernstrom
-      </Link>
+      </TransitionLink>
 
       <div className="flex items-center gap-1 uppercase">
         <div className="hidden sm:flex items-center gap-1">
           {links.map((l) => (
-            <Link key={l.to} to={l.to} className="nav-link font-light tracking-[0.3em]">
+            <TransitionLink key={l.to} to={l.to} className="nav-link font-light tracking-[0.3em]">
               {l.label}
-            </Link>
+            </TransitionLink>
           ))}
         </div>
         {!onContactPage && (
