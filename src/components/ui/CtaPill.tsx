@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { RedArrow } from './RedArrow';
 import { TransitionLink } from './TransitionLink';
 
 const SIZE = {
@@ -49,12 +50,7 @@ export function CtaPill({ to, size = 'sm', quiet, children }: CtaPillProps) {
       className={`glass-pill group inline-flex items-center rounded-full font-heading font-medium whitespace-nowrap text-zinc-900 ${focusRing} dark:text-zinc-100 ${SIZE[size]}`}
     >
       <span>{children}</span>
-      <span
-        aria-hidden="true"
-        className="tracking-normal text-red-500 transition-transform group-hover:translate-x-1 motion-reduce:transition-none"
-      >
-        →
-      </span>
+      <RedArrow className="tracking-normal text-red-500" />
     </TransitionLink>
   );
 }

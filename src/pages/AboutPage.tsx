@@ -1,16 +1,10 @@
-import { useEffect } from 'react';
-import { About } from '../components/About';
-import { ContactCta } from '../components/ContactCta';
-import { Footer } from '../components/Footer';
+import { About } from '../components/about/About';
+import { ContactCta } from '../components/about/ContactCta';
+import { Footer } from '../components/layout/Footer';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
 export function AboutPage() {
-  useEffect(() => {
-    const previous = document.title;
-    document.title = 'About · Alexander Tjernström';
-    return () => {
-      document.title = previous;
-    };
-  }, []);
+  useDocumentTitle('About · Alexander Tjernström');
 
   return (
     <div className="px-4 sm:px-8 lg:px-12">

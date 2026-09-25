@@ -1,7 +1,7 @@
 import type { MouseEvent } from 'react';
 import { flushSync } from 'react-dom';
 import { Link, useLocation, useNavigate, type LinkProps } from 'react-router-dom';
-import { playSound } from '../lib/sound';
+import { playSound } from '../../lib/sound';
 
 type ViewTransitionDocument = Document & {
   startViewTransition?: (update: () => void) => { ready: Promise<void>; finished: Promise<void> };

@@ -21,6 +21,28 @@ the Changelog. The "Current state" section is always rewritten to match reality.
 
 ## Current state
 
+### Code structure (since 2026-09-26)
+
+- `pages/` — one file per route (`Home`, `AboutPage`, `Contact`): page state and
+  layout only, assembled from components.
+- `components/layout/` — `Navbar` (picks `ContactNav` or `SiteNav`), `NavControls`
+  (theme toggle, sound toggle, back arrow), `Footer`, `ScrollManager`.
+- `components/ui/` — shared pieces: `CtaPill`, `TransitionLink`, `CodeRain` (was
+  `HeroBackground`), `Eyebrow`, `ExternalRow`, `RedArrow`.
+- `components/home/`, `about/`, `contact/` — per-page components. The brief's
+  six steps are `components/contact/steps/*`; they share `Question`,
+  `Choices`/`Chip`, `Fold` and `Field`/`TextField`.
+- `data/` — content: `site.ts` (email and profile links), `brief.ts` (form
+  options, services), `about.ts` (skills, experience, education), `projects.ts`.
+- `lib/` — logic and shared class strings: `brief.ts` (Brief type, summary,
+  mailto, validation), `sound.ts`, `type.ts` (`PAGE_HEADING`, `EYEBROW`,
+  `PILL_FOCUS`).
+- `hooks/` — `useTheme`, `useScrolled`, `useNavHeight`, `useHeightVar`,
+  `useDocumentTitle`.
+- The split was checked pixel for pixel: 20 page states (home, About, contact,
+  contact with errors, the sent view; dark and light; desktop and mobile) were
+  identical before and after.
+
 ### Hero (`src/components/Hero.tsx`) — "Airy wordmark" (Surname Study take two, A)
 
 - Centered, fills exactly one viewport (`h-full` inside a

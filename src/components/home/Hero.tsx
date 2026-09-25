@@ -1,5 +1,6 @@
-import { TransitionLink } from './TransitionLink';
-import { HeroBackground } from './HeroBackground';
+import { CodeRain } from '../ui/CodeRain';
+import { RedArrow } from '../ui/RedArrow';
+import { TransitionLink } from '../ui/TransitionLink';
 
 export function Hero() {
   return (
@@ -7,7 +8,7 @@ export function Hero() {
       style={{ paddingBottom: 'var(--nav-h, 74px)' }}
       className="relative isolate w-full h-full flex flex-col items-center justify-center text-center overflow-hidden"
     >
-      <HeroBackground />
+      <CodeRain />
 
       <div className="relative z-10 flex flex-col items-center gap-10 sm:gap-12">
         <p className="font-mono text-[11px] sm:text-xs tracking-[0.03em] text-zinc-500 dark:text-zinc-400">
@@ -40,12 +41,7 @@ export function Hero() {
             <span className="underline decoration-zinc-400 dark:decoration-zinc-600 underline-offset-[6px] transition-colors group-hover:decoration-current">
               Tell me what to build
             </span>
-            <span
-              aria-hidden="true"
-              className="text-red-500 transition-transform group-hover:translate-x-1 motion-reduce:transition-none"
-            >
-              →
-            </span>
+            <RedArrow />
           </TransitionLink>
         </div>
       </div>

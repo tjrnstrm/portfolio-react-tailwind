@@ -18,7 +18,7 @@ const PAGE_MASK =
  * `page` is a fixed, viewport-sized layer that stays put while the page
  * (and any glass on it) scrolls over it.
  */
-export function HeroBackground({ variant = 'hero' }: { variant?: 'hero' | 'page' }) {
+export function CodeRain({ variant = 'hero' }: { variant?: 'hero' | 'page' }) {
   // On the page variant the rain sits behind blurred glass, so it needs more punch.
   const boost = variant === 'page' ? 2.4 : 1;
   const ref = useRef<HTMLCanvasElement | null>(null);
