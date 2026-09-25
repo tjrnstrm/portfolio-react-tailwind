@@ -40,7 +40,7 @@ function ContactNav({ onToggleTheme, scrolled, ref }: NavbarProps) {
       }}
       className={`sticky z-50 flex items-center justify-between text-xs text-zinc-900 transition-all duration-1000 ease-in-out dark:text-zinc-100 ${
         scrolled
-          ? "glass mt-4 ml-4 w-[calc(100%-2rem)] rounded-[100px] py-3 pr-5 pl-4 sm:ml-8 sm:w-[calc(100%-4rem)] lg:ml-12 lg:w-[calc((100%-7.5rem)*5/12)]"
+          ? "glass mt-4 ml-4 w-[calc(100%-2rem)] rounded-[100px] px-4 py-3 sm:ml-8 sm:w-[calc(100%-4rem)] lg:ml-12 lg:w-[calc((100%-7.5rem)*5/12)]"
           : "mt-0 ml-0 w-full rounded-none border border-transparent px-6 py-5 sm:px-8 lg:px-12"
       }`}
     >
@@ -48,13 +48,13 @@ function ContactNav({ onToggleTheme, scrolled, ref }: NavbarProps) {
 
       <div className="flex items-center gap-1">
         <SoundToggle />
-        <ThemeToggle onToggle={onToggleTheme} />
+        <ThemeToggle onToggle={onToggleTheme} className="" />
       </div>
     </nav>
   );
 }
 
-/** Home and About: About link, the "Start a project" pill and the theme toggle. */
+/** Home and About: About link and "Start a project" on the left, sound and theme toggles on the right. */
 function SiteNav({
   onToggleTheme,
   scrolled,
@@ -81,14 +81,16 @@ function SiteNav({
           : "py-5 px-6 sm:px-8 lg:px-12 border-transparent bg-transparent"
       }`}
     >
-      {/* No wordmark. The About page gets a back arrow, like the contact page. */}
-      {onAboutPage && <BackLink />}
-
-      <div className="ml-auto flex items-center gap-1">
-        {!onAboutPage && (
+      {/* No wordmark. About and "Start a project" sit on the left at every width
+          (the About page has its back arrow first, and no About link); the
+          sound and theme toggles are on the right. */}
+      <div className="flex items-center gap-1">
+        {onAboutPage ? (
+          <BackLink />
+        ) : (
           <TransitionLink
             to="/about"
-            className="nav-link font-heading text-[13px] font-normal"
+            className="nav-link -ml-3 font-heading text-[13px] font-normal"
             onClick={() => playSound("scan")}
           >
             About
@@ -96,10 +98,13 @@ function SiteNav({
         )}
         <div className="mx-1 sm:ml-3">
           <CtaPill to="/contact" quiet>
-            <span className="sm:hidden">Contact</span>
-            <span className="hidden sm:inline">Start a project</span>
+            Start a project
           </CtaPill>
         </div>
+      </div>
+
+      <div className="flex items-center gap-1">
+        <SoundToggle />
         <ThemeToggle onToggle={onToggleTheme} />
       </div>
     </nav>

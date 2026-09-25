@@ -215,8 +215,9 @@ the Changelog. The "Current state" section is always rewritten to match reality.
 - Desktop: the left glass panel holds the pitch, "What I build", recent client
   work, GitHub ("More work") and the plain-email line. It follows the scroll on
   screens >= 900px tall (`.pitch-sticky`); it is taller than the screen, so it
-  pins by its bottom edge (`--panel-h` is set from a `ResizeObserver`). The
-  same content sits below the form on mobile.
+  pins by its bottom edge (`--panel-h` is set from a `ResizeObserver`).
+- Mobile order: the pitch, then "What I build", then "Project brief" and the
+  form, then client work, GitHub and the plain-email line below the form.
 
 ### Type / label system (page-wide)
 
@@ -315,8 +316,9 @@ Unified so the sections read as one document, not floating islands:
   real Vercel URL when known.
 - `Marquee.tsx` was deleted (2026-09-25, changelog 26). The hero now ends with
   a fade instead of a strip.
-- `Footer.tsx`: left-aligned (was centered), `border-t`, Geist Mono, two items —
-  `© 2026 Alexander Tjernström` / `Built with React + Tailwind`.
+- `Footer.tsx`: left-aligned (was centered), `border-t`, Geist Mono, one line —
+  `© 2026 Alexander Tjernström`. ("Built with React + Tailwind" was removed
+  2026-09-26.) On the home page it is an overlay without the border.
 
 ---
 
@@ -555,6 +557,41 @@ _Status: **A picked and shipped** (take two) — airy wordmark, no red period
     headings are gone (they were plain periods now), and so is the hero dot. The
     About and contact headings share one class string (`PAGE_HEADING` in
     `src/lib/type.ts`), so they are the same size at every width.
+45. **Phone pass.** Mobile contact order (see Contact page), the navbar button says
+    "Start a project" at every width (it used to say "Contact" on phones), the
+    contact bar's icons sit the same distance from the page edge on both sides
+    (the theme toggle's `-mr-1` trim is off there), the small icon buttons and
+    text links have taller touch targets (an `::after` or `py/-my`, no layout
+    change), the "Project brief" label lines up with the other content, and the
+    long customers placeholder no longer clips. No horizontal scrolling at
+    360, 390 or 430px on any page.
+46. **Phone home.** On a phone "Taking new projects" sits just under the navbar,
+    left-aligned with the About text (`Status` in `Hero.tsx`; from `sm` up it
+    stays beside the hero link). The overlay footer's left inset is now
+    `inset-x-6` to match the navbar padding. "Built with React + Tailwind" is
+    gone from the footer.
+47. **Site navbar, all widths.** About and "Start a project" are on the left
+    (on the About page: the back arrow, then "Start a project"); the sound and
+    theme toggles are on the right, so the mute toggle is now on every page.
+    "Start a project" has no glass background any more: plain text with the
+    same always-visible red arrow as "Tell me what to build" (nudges right on
+    hover, keeps the old pill height so the navbar doesn't change). The About
+    page's eyebrows above the big headings have the same 16px gap as the
+    contact page's, and the right-hand blocks are `space-y-12` apart like the
+    contact page's `gap-12`.
+48. **Brief form rules, About rain.** Mandatory (red star after a failed Send,
+    first empty one is focused and scrolled to): name, email, What you do,
+    What should visitors do?, Style, Theme, Copy language, all three of The
+    practical bits (`REQUIRED` in `lib/brief.ts`; each key is the input `name`).
+    Style has "Not sure", which opens "Are there any sites you like?" bound to
+    the same `refs` value as "Sites you like" on the last step, so the two
+    mirror. Copy language has "Other", which opens a required "Which language?"
+    (`langOther`). Theme and Copy language sit side by side (flex, `gap-x-10`)
+    instead of stretched across two grid columns. "What are we building?" got
+    two categories (Redesign, Automation) and a few more kinds under Website,
+    Portfolio, App and API. The About page has the code rain behind it (`page`
+    variant at `strength={1}`, since there is no glass) and lost its two
+    horizontal rules; only the footer line is left.
 
 ---
 

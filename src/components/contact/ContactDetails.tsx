@@ -37,7 +37,7 @@ export function ContactDetails() {
         <span>Prefer plain email?</span>
         <a
           href={`mailto:${EMAIL}`}
-          className="font-heading text-sm tracking-normal text-zinc-900 normal-case transition-colors hover:text-zinc-600 dark:text-zinc-100 dark:hover:text-zinc-300"
+          className="-my-1.5 py-1.5 font-heading text-sm tracking-normal text-zinc-900 normal-case transition-colors hover:text-zinc-600 dark:text-zinc-100 dark:hover:text-zinc-300"
         >
           {EMAIL}
         </a>

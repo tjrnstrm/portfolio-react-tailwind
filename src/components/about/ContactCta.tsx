@@ -7,9 +7,9 @@ import { Eyebrow } from '../ui/Eyebrow';
 export function ContactCta() {
   return (
     <section id="brief" className="scroll-mt-24 py-14">
-      <div className="flex flex-col gap-8 border-t border-zinc-300 pt-12 sm:flex-row sm:items-end sm:justify-between dark:border-zinc-200/10">
+      <div className="flex flex-col gap-8 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <Eyebrow>Got a project?</Eyebrow>
+          <Eyebrow className="mb-4">Got a project?</Eyebrow>
           <h2 className={PAGE_HEADING}>Tell me what to build.</h2>
         </div>
         <div className="flex flex-col items-start gap-3 sm:items-end">

@@ -1,4 +1,4 @@
-import type { StepProps } from '../../../lib/brief';
+import type { FlaggedProps } from '../../../lib/brief';
 import { TextField } from '../Field';
 import { Question } from '../Question';
 
@@ -7,7 +7,7 @@ export function AboutYouStep({
   brief,
   set,
   flagged,
-}: StepProps & { flagged: { name: boolean; email: boolean } }) {
+}: FlaggedProps) {
   return (
     <Question
       id="q-who"
@@ -51,6 +51,9 @@ export function AboutYouStep({
         />
         <TextField
           label="What you do"
+          name="industry"
+          required
+          flagged={flagged.industry}
           value={brief.industry}
           onChange={(industry) => set({ industry })}
           placeholder="Excavation contractor, hair salon..."
@@ -66,7 +69,7 @@ export function AboutYouStep({
           className="sm:col-span-2"
           value={brief.audience}
           onChange={(audience) => set({ audience })}
-          placeholder="Construction firms and private homeowners"
+          placeholder="Construction firms, homeowners"
         />
       </div>
     </Question>

@@ -1,7 +1,8 @@
 import { MdArrowOutward } from "react-icons/md";
 import { CV_URL, EMAIL, GITHUB_URL, LINKEDIN_URL } from "../../data/site";
 
-const linkClass = "hover:text-zinc-950 dark:hover:text-zinc-200 transition-colors";
+// py/-my: a taller touch target for small text links, with no layout change
+const linkClass = "-my-1.5 py-1.5 hover:text-zinc-950 dark:hover:text-zinc-200 transition-colors";
 
 /** The bio, then CV / LinkedIn / GitHub and the email address. */
 export function AboutIntro() {

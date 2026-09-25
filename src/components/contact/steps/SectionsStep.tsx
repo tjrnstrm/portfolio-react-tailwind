@@ -1,11 +1,11 @@
 import { SECTIONS } from '../../../data/brief';
-import { toggle, type StepProps } from '../../../lib/brief';
+import { toggle, type FlaggedProps } from '../../../lib/brief';
 import { Choices } from '../Choices';
 import { TextField } from '../Field';
 import { Question } from '../Question';
 
 /** Step 3: the sections of the first version, and what visitors should do. */
-export function SectionsStep({ brief, set }: StepProps) {
+export function SectionsStep({ brief, set, flagged }: FlaggedProps) {
   return (
     <Question
       id="q-sections"
@@ -21,6 +21,9 @@ export function SectionsStep({ brief, set }: StepProps) {
       />
       <TextField
         label="What should visitors do?"
+        name="cta"
+        required
+        flagged={flagged.cta}
         className="max-w-lg"
         value={brief.cta}
         onChange={(cta) => set({ cta })}

@@ -1,7 +1,7 @@
 import type { CSSProperties } from 'react';
 import type { Choice } from '../../data/brief';
 import { Chip, type ChipSize } from './Chip';
-import { FIELD_LABEL } from './Field';
+import { FIELD_LABEL, RequiredMark } from './Field';
 
 type ChoicesProps = {
   name: string;
@@ -11,6 +11,10 @@ type ChoicesProps = {
   size: ChipSize;
   radio?: boolean;
   label?: string;
+  /** Adds a * after the label. */
+  required?: boolean;
+  /** Turns the * red: a mandatory question left unanswered. */
+  flagged?: boolean;
   /** Fan the chips in one after another when their fold opens. */
   stagger?: boolean;
 };
@@ -24,6 +28,8 @@ export function Choices({
   size,
   radio,
   label,
+  required,
+  flagged,
   stagger,
 }: ChoicesProps) {
   const labelId = `${name}-label`;
@@ -32,6 +38,7 @@ export function Choices({
       {label && (
         <span id={labelId} className={FIELD_LABEL}>
           {label}
+          {required && <RequiredMark flagged={flagged} />}
         </span>
       )}
       <div

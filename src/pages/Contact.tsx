@@ -12,6 +12,8 @@ import {
   INITIAL_BRIEF,
   mailtoHref,
   missingFields,
+  NOTHING_MISSING,
+  REQUIRED,
   summarise,
   type Brief,
 } from '../lib/brief';
@@ -47,13 +49,17 @@ export function Contact() {
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (missing.name || missing.email) {
+    const firstMissing = REQUIRED.find((k) => missing[k]);
+    if (firstMissing) {
       playSound('error');
       setShowErrors(true);
-      const first = e.currentTarget.elements.namedItem(
-        missing.name ? 'name' : 'email',
-      );
-      if (first instanceof HTMLElement) first.focus();
+      // A group of radio chips comes back as a list; focus its first chip.
+      const found = e.currentTarget.elements.namedItem(firstMissing);
+      const first = found instanceof RadioNodeList ? found[0] : found;
+      if (first instanceof HTMLElement) {
+        first.focus();
+        first.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      }
       return;
     }
     playSound('success');
@@ -79,11 +85,17 @@ export function Contact() {
       <div className="grid gap-y-8 lg:mb-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-x-6">
         <PitchPanel />
 
+        {/* Mobile only: "What I build" sits between the pitch and the brief (on
+            desktop it is inside the sticky panel). */}
+        <div className="lg:hidden">
+          <ServicesList />
+        </div>
+
         <div
           ref={mainRef}
           className="flex scroll-mt-24 flex-col gap-5 lg:col-start-2 lg:row-start-1"
         >
-          <div className="reveal flex flex-col justify-between gap-1 px-2 pb-1 font-mono text-[11px] tracking-[0.03em] text-zinc-600 sm:flex-row sm:items-center lg:pt-2 dark:text-zinc-400">
+          <div className="reveal flex flex-col justify-between gap-1 pb-1 font-mono text-[11px] tracking-[0.03em] text-zinc-600 sm:flex-row sm:items-center lg:px-2 lg:pt-2 dark:text-zinc-400">
             <span>Project brief</span>
             <span>{STEPS} steps · no cost · no commitment</span>
           </div>
@@ -92,10 +104,7 @@ export function Contact() {
             <BriefForm
               brief={brief}
               set={set}
-              flagged={{
-                name: showErrors && missing.name,
-                email: showErrors && missing.email,
-              }}
+              flagged={showErrors ? missing : NOTHING_MISSING}
               onSubmit={onSubmit}
             />
           ) : (
@@ -109,9 +118,8 @@ export function Contact() {
         </div>
       </div>
 
-      {/* Mobile only: on desktop all of this lives in the sticky panel. */}
+      {/* Mobile only: on desktop this lives in the sticky panel. */}
       <aside className="mt-10 mb-4 flex flex-col gap-12 lg:hidden">
-        <ServicesList />
         <ContactDetails />
       </aside>
       <Footer />

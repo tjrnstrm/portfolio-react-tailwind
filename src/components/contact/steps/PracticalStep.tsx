@@ -1,12 +1,12 @@
 import { DOMAIN, MAIL, WHEN } from '../../../data/brief';
-import type { StepProps } from '../../../lib/brief';
+import type { FlaggedProps } from '../../../lib/brief';
 import { Choices } from '../Choices';
 import { TextField } from '../Field';
 import { Fold } from '../Fold';
 import { Question } from '../Question';
 
 /** Step 5: domain, business email and timeline. */
-export function PracticalStep({ brief, set }: StepProps) {
+export function PracticalStep({ brief, set, flagged }: FlaggedProps) {
   const wantsDomain = brief.domain === 'want';
   const wantsMail = brief.mail === 'want';
 
@@ -21,6 +21,8 @@ export function PracticalStep({ brief, set }: StepProps) {
         name="domain"
         size="md"
         label="Do you have a domain?"
+        required
+        flagged={flagged.domain}
         options={DOMAIN}
         selected={[brief.domain]}
         onPick={(domain) => set({ domain, domainValue: '' })}
@@ -39,6 +41,8 @@ export function PracticalStep({ brief, set }: StepProps) {
         name="mail"
         size="md"
         label="Email on your own domain, like hello@yourcompany.se?"
+        required
+        flagged={flagged.mail}
         options={MAIL}
         selected={[brief.mail]}
         onPick={(mail) => set({ mail, mailValue: '' })}
@@ -61,6 +65,8 @@ export function PracticalStep({ brief, set }: StepProps) {
         name="when"
         size="sm"
         label="When do you need it?"
+        required
+        flagged={flagged.when}
         options={WHEN.map((w) => ({ id: w, label: w }))}
         selected={[brief.when]}
         onPick={(when) => set({ when })}

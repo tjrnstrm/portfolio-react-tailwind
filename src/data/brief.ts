@@ -13,6 +13,9 @@ export const CATEGORIES: Category[] = [
       'E-commerce',
       'Booking site',
       'Blog / CMS',
+      'Event page',
+      'Membership site',
+      'Documentation',
     ],
   },
   {
@@ -24,6 +27,7 @@ export const CATEGORIES: Category[] = [
       'Developer',
       'Music / audio',
       'Art / illustration',
+      'Agency / studio',
       'Personal CV',
     ],
   },
@@ -36,6 +40,9 @@ export const CATEGORIES: Category[] = [
       'Internal tool',
       'Dashboard',
       'Customer portal',
+      'Booking system',
+      'Admin panel',
+      'Real-time / chat',
     ],
   },
   {
@@ -47,6 +54,29 @@ export const CATEGORIES: Category[] = [
       'Integrations',
       'Payments (Stripe)',
       'Backend for an existing app',
+      'Authentication',
+      'Webhooks',
+    ],
+  },
+  {
+    id: 'redesign',
+    label: 'Redesign',
+    types: [
+      'Fresh new look',
+      'Rebuild from scratch',
+      'Move to a new platform',
+      'Speed & SEO fixes',
+      'Fix or extend what exists',
+    ],
+  },
+  {
+    id: 'automation',
+    label: 'Automation',
+    types: [
+      'Workflows',
+      'Data import / export',
+      'Scheduled jobs',
+      'Emails & notifications',
     ],
   },
   { id: 'other', label: 'Something else', types: [] },
@@ -75,6 +105,7 @@ export const STYLES: Choice[] = [
   { id: 'premium', label: 'Premium' },
   { id: 'warm', label: 'Warm & friendly' },
   { id: 'corporate', label: 'Corporate' },
+  { id: 'unsure', label: 'Not sure' },
 ];
 
 export const THEMES: Choice[] = [
@@ -87,6 +118,7 @@ export const LANGS: Choice[] = [
   { id: 'sv', label: 'Swedish' },
   { id: 'en', label: 'English' },
   { id: 'both', label: 'Both - Switchable' },
+  { id: 'other', label: 'Other' },
 ];
 
 export const DOMAIN: Choice[] = [

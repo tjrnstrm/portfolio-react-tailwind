@@ -27,6 +27,7 @@ export type Brief = {
   style: string;
   theme: string;
   lang: string;
+  langOther: string;
   color: string;
   domain: string;
   domainValue: string;
@@ -61,6 +62,7 @@ export const INITIAL_BRIEF: Brief = {
   style: '',
   theme: '',
   lang: '',
+  langOther: '',
   color: '',
   domain: '',
   domainValue: '',
@@ -79,13 +81,50 @@ export const toggle = (list: string[], id: string) =>
 const labelOf = (list: Choice[], id: string) =>
   list.find((o) => o.id === id)?.label;
 
+/**
+ * The mandatory fields, in page order. Each key is also the `name` of its input
+ * (or of its group of radio chips), so a failed Send can focus the first one.
+ */
+export const REQUIRED = [
+  'name',
+  'email',
+  'industry',
+  'cta',
+  'style',
+  'theme',
+  'lang',
+  'langOther',
+  'domain',
+  'mail',
+  'when',
+] as const;
+
+export type RequiredKey = (typeof REQUIRED)[number];
+export type Missing = Record<RequiredKey, boolean>;
+
+/** What each step with mandatory fields receives on top of the brief. */
+export type FlaggedProps = StepProps & { flagged: Missing };
+
 /** The mandatory fields that are empty (or, for email, not an address). */
-export function missingFields(b: Brief) {
+export function missingFields(b: Brief): Missing {
   return {
     name: !b.name.trim(),
     email: !EMAIL_RE.test(b.email.trim()),
+    industry: !b.industry.trim(),
+    cta: !b.cta.trim(),
+    style: !b.style,
+    theme: !b.theme,
+    lang: !b.lang,
+    langOther: b.lang === 'other' && !b.langOther.trim(),
+    domain: !b.domain,
+    mail: !b.mail,
+    when: !b.when,
   };
 }
+
+export const NOTHING_MISSING = Object.fromEntries(
+  REQUIRED.map((k) => [k, false]),
+) as Missing;
 
 /** Only answered questions make it into the brief; the three that always do come first. */
 export function summarise(b: Brief): BriefRows {
@@ -102,13 +141,15 @@ export function summarise(b: Brief): BriefRows {
     .filter(Boolean)
     .join(' ');
   const feel = [
-    labelOf(STYLES, b.style),
+    b.style === 'unsure' ? 'style not decided' : labelOf(STYLES, b.style),
     b.theme === 'both'
       ? 'light and dark (toggleable)'
       : labelOf(THEMES, b.theme)?.toLowerCase(),
     b.lang === 'both'
       ? 'Swedish and English copy (switchable)'
-      : labelOf(LANGS, b.lang) && `${labelOf(LANGS, b.lang)} copy`,
+      : b.lang === 'other'
+        ? `${b.langOther.trim() || 'other language'} copy`
+        : labelOf(LANGS, b.lang) && `${labelOf(LANGS, b.lang)} copy`,
   ]
     .filter(Boolean)
     .join(', ');

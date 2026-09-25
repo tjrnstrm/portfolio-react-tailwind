@@ -12,22 +12,27 @@ type FieldProps = {
   flagged?: boolean;
 };
 
+/** The * after a mandatory label; red once a Send left the field empty. */
+export function RequiredMark({ flagged }: { flagged?: boolean }) {
+  return (
+    <span
+      aria-hidden="true"
+      className={`ml-1 transition-colors duration-200 ${
+        flagged ? 'text-red-500' : 'text-zinc-400 dark:text-zinc-500'
+      }`}
+    >
+      *
+    </span>
+  );
+}
+
 /** A label above any control. */
 export function Field({ label, children, className = '', required, flagged }: FieldProps) {
   return (
     <label className={`flex flex-col gap-2 ${className}`}>
       <span className={FIELD_LABEL}>
         {label}
-        {required && (
-          <span
-            aria-hidden="true"
-            className={`ml-1 transition-colors duration-200 ${
-              flagged ? 'text-red-500' : 'text-zinc-400 dark:text-zinc-500'
-            }`}
-          >
-            *
-          </span>
-        )}
+        {required && <RequiredMark flagged={flagged} />}
       </span>
       {children}
     </label>
