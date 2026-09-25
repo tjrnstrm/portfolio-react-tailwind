@@ -1,6 +1,7 @@
 import type { MouseEvent } from 'react';
 import { flushSync } from 'react-dom';
 import { Link, useLocation, useNavigate, type LinkProps } from 'react-router-dom';
+import { playSound } from '../lib/sound';
 
 type ViewTransitionDocument = Document & {
   startViewTransition?: (update: () => void) => { ready: Promise<void>; finished: Promise<void> };
@@ -51,6 +52,7 @@ export function TransitionLink({ to, onClick, ...rest }: LinkProps & { to: strin
     transition.finished.finally(() => root.classList.remove(direction));
 
     if (direction === 'vt-forward') {
+      playSound('arrival');
       // The contact cards stagger in on their own animations. Hold them until
       // the transition is actually on screen, and keep their start delay (a CSS
       // variable on <html>) until they have finished: dropping it mid-run would

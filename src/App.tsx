@@ -1,7 +1,8 @@
 import { useState, useEffect, useLayoutEffect, useRef } from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { Navbar } from './components/Navbar';
 import { ScrollManager } from './components/ScrollManager';
+import { startHoverSounds } from './lib/sound';
 import { Home } from './pages/Home';
 import { Contact } from './pages/Contact';
 
@@ -9,13 +10,21 @@ export default function App() {
   const [theme, setTheme] = useState<'dark' | 'light'>(
     () => (localStorage.getItem('theme') as 'dark' | 'light') ?? 'dark',
   );
+  const { pathname } = useLocation();
   const [scrolled, setScrolled] = useState(false);
+  const [lastPath, setLastPath] = useState(pathname);
+  if (lastPath !== pathname) {
+    setLastPath(pathname);
+    setScrolled(false);
+  }
   const navRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
     localStorage.setItem('theme', theme);
   }, [theme]);
+
+  useEffect(() => startHoverSounds(), []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
@@ -24,12 +33,16 @@ export default function App() {
   }, []);
 
   // Keep the first screen exactly one viewport tall by measuring the real
-  // navbar height (its unscrolled flow height) into a CSS variable.
+  // navbar height (its unscrolled flow height) into a CSS variable. Re-measured
+  // on every page change, because the contact page has a different navbar.
   useLayoutEffect(() => {
     const measure = () => {
       const el = navRef.current;
       if (el) {
-        document.documentElement.style.setProperty('--nav-h', `${el.offsetHeight}px`);
+        // margin included: the contact pill's margin makes up the height it
+        // gives up, so the flow footprint is the same in both shapes
+        const h = el.offsetHeight + parseFloat(getComputedStyle(el).marginTop);
+        document.documentElement.style.setProperty('--nav-h', `${h}px`);
       }
     };
     measure();
@@ -38,7 +51,7 @@ export default function App() {
       document.fonts.ready.then(measure);
     }
     return () => window.removeEventListener('resize', measure);
-  }, []);
+  }, [pathname]);
 
   const toggleTheme = () => {
     document.documentElement.classList.add('theme-transitioning');

@@ -9,10 +9,12 @@ import {
 import { MdArrowOutward } from 'react-icons/md';
 import { Footer } from '../components/Footer';
 import { HeroBackground } from '../components/HeroBackground';
+import { playSound } from '../lib/sound';
 import { clientProjects } from '../data/projects';
 
 const EMAIL = 'tjernstrom@proton.me';
 const GITHUB = 'https://github.com/tZandr';
+const EMAIL_RE = /^\S+@\S+\.\S+$/;
 
 type Choice = { id: string; label: string };
 type Category = Choice & { types: string[] };
@@ -252,7 +254,10 @@ function Chip({ type, name, label, checked, onChange, size }: ChipProps) {
         type={type}
         name={name}
         checked={checked}
-        onChange={onChange}
+        onChange={() => {
+          playSound('toggle');
+          onChange();
+        }}
         className="sr-only"
       />
       <span className="chip-tick" aria-hidden="true">
@@ -369,18 +374,35 @@ function Question({
   );
 }
 
+/** `required` adds a * after the label; `flagged` turns it red (a mandatory field left empty). */
 function Field({
   label,
   children,
   className = '',
+  required,
+  flagged,
 }: {
   label: string;
   children: ReactNode;
   className?: string;
+  required?: boolean;
+  flagged?: boolean;
 }) {
   return (
     <label className={`flex flex-col gap-2 ${className}`}>
-      <span className={fieldLabel}>{label}</span>
+      <span className={fieldLabel}>
+        {label}
+        {required && (
+          <span
+            aria-hidden="true"
+            className={`ml-1 transition-colors duration-200 ${
+              flagged ? 'text-red-500' : 'text-zinc-400 dark:text-zinc-500'
+            }`}
+          >
+            *
+          </span>
+        )}
+      </span>
       {children}
     </label>
   );
@@ -515,8 +537,24 @@ export function Contact() {
   const rows = summarise(brief);
   const href = mailtoHref(brief, rows);
 
-  const onSubmit = (e: FormEvent) => {
+  // Mandatory fields. Nothing is flagged until the first Send attempt; after
+  // that the stars follow the fields live.
+  const [showErrors, setShowErrors] = useState(false);
+  const missing = {
+    name: !brief.name.trim(),
+    email: !EMAIL_RE.test(brief.email.trim()),
+  };
+
+  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (missing.name || missing.email) {
+      playSound('error');
+      setShowErrors(true);
+      const first = e.currentTarget.elements.namedItem(missing.name ? 'name' : 'email');
+      if (first instanceof HTMLElement) first.focus();
+      return;
+    }
+    playSound('success');
     setDone(true);
     window.location.href = href;
   };
@@ -524,6 +562,7 @@ export function Contact() {
   const copyBrief = async () => {
     try {
       await navigator.clipboard.writeText(briefText(rows));
+      playSound('success');
       setCopied(true);
       window.setTimeout(() => setCopied(false), 2000);
     } catch {
@@ -533,11 +572,13 @@ export function Contact() {
 
 
   return (
-    // Pulled up under the navbar so the code rain behind the glass runs to the top edge.
+    // Pulled up under the navbar so the code rain behind the glass runs to the top
+    // edge; the content starts 1.5rem below it (the pill state of the navbar ends
+    // 1.25rem above that, see Navbar.tsx).
     <div
       style={{
-        marginTop: 'calc(var(--nav-h, 74px) * -1)',
-        paddingTop: 'var(--nav-h, 74px)',
+        marginTop: 'calc(var(--nav-h, 72px) * -1)',
+        paddingTop: 'calc(var(--nav-h, 72px) + 1.5rem)',
       }}
       className="relative isolate overflow-clip px-4 font-heading sm:px-8 lg:px-12"
     >
@@ -545,7 +586,7 @@ export function Contact() {
         <HeroBackground variant="page" />
       </div>
 
-      <div className="grid gap-y-8 pt-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-x-6">
+      <div className="grid gap-y-8 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-x-6">
         {/* Pitch. On desktop this is one frosted panel that holds the pitch,
             services, client work, GitHub and email, and follows the scroll while
             the form is filled in (see .pitch-sticky in index.css). */}
@@ -554,14 +595,7 @@ export function Contact() {
           className="reveal pitch-sticky flex flex-col gap-10 lg:glass lg:col-start-1 lg:row-start-1 lg:self-start lg:rounded-[28px] lg:p-10"
         >
           <section className="flex flex-col gap-7">
-            <span className="glass-tag flex w-fit items-center gap-2 rounded-full px-3 py-1.5 font-mono text-[10px] tracking-[0.16em] uppercase text-green-700 dark:text-green-500">
-              <span className="relative flex h-1.5 w-1.5 shrink-0">
-                <span className="status-ripple absolute inset-0 rounded-full" />
-                <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-green-600 dark:bg-green-500" />
-              </span>
-              Taking new projects
-            </span>
-            <p className="-mb-3 mt-4 font-mono text-[11px] tracking-[0.26em] uppercase text-zinc-500 dark:text-zinc-400">
+            <p className="-mb-3 font-mono text-[11px] tracking-[0.26em] uppercase text-zinc-500 dark:text-zinc-400">
               Free consultation · Stockholm
             </p>
             <h1 className="text-4xl leading-[1.05] font-extralight tracking-[0.1em] uppercase wrap-break-word sm:text-6xl lg:text-[clamp(2.75rem,4.2vw,4.5rem)]">
@@ -592,7 +626,7 @@ export function Contact() {
           </div>
 
           {!done ? (
-            <form onSubmit={onSubmit} className="flex flex-col gap-5">
+            <form onSubmit={onSubmit} noValidate className="flex flex-col gap-5">
               <Question
                 id="q-build"
                 title="What are we building?"
@@ -634,23 +668,27 @@ export function Contact() {
               <Question
                 id="q-who"
                 title="About you"
-                hint="So I know who I am building for, and where to reply."
+                hint="So I know who I am building for, and where to reply. Fields marked * are required."
               >
                 <div className="grid gap-x-5 gap-y-[18px] sm:grid-cols-2">
-                  <Field label="Your name">
+                  <Field label="Your name" required flagged={showErrors && missing.name}>
                     <input
                       type="text"
+                      name="name"
                       required
+                      aria-invalid={showErrors && missing.name}
                       autoComplete="name"
                       value={brief.name}
                       onChange={(e) => set({ name: e.target.value })}
                       className="glass-field"
                     />
                   </Field>
-                  <Field label="Email">
+                  <Field label="Email" required flagged={showErrors && missing.email}>
                     <input
                       type="email"
+                      name="email"
                       required
+                      aria-invalid={showErrors && missing.email}
                       autoComplete="email"
                       value={brief.email}
                       onChange={(e) => set({ email: e.target.value })}

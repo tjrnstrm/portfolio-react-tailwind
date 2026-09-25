@@ -85,6 +85,19 @@ the Changelog. The "Current state" section is always rewritten to match reality.
   red arrow) sits between the menu and the theme toggle, and is hidden on
   `/contact`. The wordmark is a `Link` to `/`. The nav has
   `view-transition-name: site-nav` so it stays put during page transitions.
+- **On `/contact` the navbar has different contents and one extra shape.** At
+  the top it is the same full-width bar as on the home page, with a back arrow
+  (`FiArrowLeft`, a `TransitionLink` to `/`) instead of the wordmark, no menu,
+  and a sound toggle (`FiVolume2` / `FiVolumeX`) next to the theme toggle.
+  Scrolling morphs it (1s, like the home pill) into a glass pill (the cards'
+  `glass` utility, `rounded-[100px]`) as wide as the pitch panel, i.e. the left
+  grid column: `(100% - 7.5rem) * 5/12` at lg, full content width below, 1.25rem
+  from the top with a 1.25rem gap above the panel. Both shapes have the same
+  footprint in the page flow (the pill's `mt-4` makes up its shorter height),
+  so the content doesn't shift; `--nav-h` includes that margin and is
+  re-measured on every route change. It is a separate keyed `<nav>`, so
+  switching pages remounts it, and `App` resets `scrolled` in the same render as
+  the route change so it never mounts as a pill after leaving a scrolled page.
 
 ### Section anchors
 
@@ -111,6 +124,23 @@ the Changelog. The "Current state" section is always rewritten to match reality.
   `<html>` (`reveal-delay`) that must stay until they finish; removing it
   mid-run shortens every remaining delay and the stagger jumps ahead.
 
+### Sounds (`src/lib/sound.ts`)
+
+- [Cuelume](https://github.com/Danilaa1/cuelume): synthesized interaction
+  sounds, no audio files. On by default at volume 0.6; the choice is saved in
+  `localStorage['sound']` (`'off'` = muted) since Cuelume doesn't persist
+  anything. `useSoundEnabled()` / `setSoundEnabled()` drive the mute button in
+  the contact navbar. Used so far: `toggle` on every chip, `success` on Send and
+  Copy brief, `arrival` when navigating to the contact page, `bloom` on the
+  contact navbar's back arrow, `page` on the theme toggle (volume 0.35), `error` when Send is
+  pressed with a mandatory field missing, and a quiet `tick` (volume 0.1) when
+  the mouse enters a button (`startHoverSounds()`: one delegated
+  `pointerover` listener over `button`, `.glass-pill`, `.chip` and `nav a`;
+  mouse only, deliberately no cooldown, so sweeping a row of chips ticks once per chip). Cuelume's own `data-cuelume-hover`
+  binding can't set a per-element volume, hence the listener. **Note:** Cuelume ignores `play()` until the page has had a
+  real user gesture (`navigator.userActivation`), so scripted clicks in tests
+  need `userGesture: true`.
+
 ### Glass ("Frost") surfaces (`src/index.css`)
 
 - Frosted cards and controls from the Frost design: `@utility glass`
@@ -131,6 +161,11 @@ the Changelog. The "Current state" section is always rewritten to match reality.
   are we building (with follow-up kinds), about you, what goes on it, how should
   it feel (style / theme / language, each with a "Both" option), the practical
   bits (domain, email, timing), anything else.
+- Mandatory fields are name and email, marked with a grey `*` after the
+  label. The form has `noValidate` and validates itself: Send with either
+  missing (or the email malformed) plays `error`, turns that field's `*` red,
+  focuses the first one and doesn't send; after the first attempt the stars
+  follow the fields live.
 - There is no backend. Send builds a `mailto:` to `tjernstrom@proton.me` with
   the answered questions only, then shows "Hit send." with Open mail app /
   Copy brief / Edit brief. Copy is honest about it being a draft.
@@ -420,6 +455,14 @@ _Status: **A picked and shipped** (take two) — airy wordmark, no red period
     client work, GitHub and email inside it.
 33. **Page transition:** tried a slide-over (looked cheap), then chose the
     staggered fade (see Routing, dark default and transitions).
+34. **Contact navbar:** back arrow instead of the wordmark, no menu, plus a
+    sound toggle beside the theme toggle. Full-width bar at the top, turning
+    into a glass pill as wide as the pitch panel (same gap as the cards) on
+    scroll.
+35. **Feedback sounds** with Cuelume and a persisted mute switch (see Sounds).
+36. **Contact page:** mandatory name and email with red stars on a failed Send;
+    removed the "Taking new projects" tag (the home page already says it) and
+    its `.glass-tag` styles; hover tick on buttons.
 
 ---
 

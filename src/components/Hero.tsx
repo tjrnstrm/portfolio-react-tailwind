@@ -33,7 +33,7 @@ export function Hero() {
           aria-label="Alexander Tjernström"
           className="font-heading font-extralight uppercase leading-none tracking-[0.3em] -mr-[0.3em] text-[clamp(2rem,6.5vw,4.25rem)]"
         >
-          Tjernstrom
+          Tjernström
         </h1>
 
         <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 font-mono text-[10px] sm:text-[11px] tracking-[0.2em] uppercase text-zinc-500 dark:text-zinc-400">
@@ -42,7 +42,7 @@ export function Hero() {
               <span className="status-ripple absolute inset-0 rounded-full" />
               <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-green-600 dark:bg-green-500" />
             </span>
-            Open to work
+            Taking new projects
           </span>
           <TransitionLink
             to="/contact"

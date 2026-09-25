@@ -116,11 +116,7 @@ html {
   --glass-hi: rgb(255 255 255 / 0.9);
   --glass-shadow: 0 10px 40px rgb(30 41 59 / 0.07);
   --glass-line: rgb(15 23 42 / 0.1);
-  --glass-line-strong: rgb(15 23 42 / 0.22);
 
-  --glass-chip-bg: rgb(255 255 255 / 0.7);
-  --glass-chip-hi: rgb(255 255 255 / 0.95);
-  --glass-chip-shadow: 0 1px 2px rgb(15 23 42 / 0.05);
   --chip-bg: rgb(15 23 42 / 0.06);
   --chip-bg-hover: rgb(15 23 42 / 0.1);
   --chip-shadow: inset 0 1px 0 rgb(255 255 255 / 0.55), 0 1px 2px rgb(15 23 42 / 0.07);
@@ -150,11 +146,7 @@ html {
   --glass-hi: rgb(255 255 255 / 0.14);
   --glass-shadow: 0 12px 44px rgb(0 0 0 / 0.4);
   --glass-line: rgb(255 255 255 / 0.1);
-  --glass-line-strong: rgb(255 255 255 / 0.22);
 
-  --glass-chip-bg: rgb(255 255 255 / 0.06);
-  --glass-chip-hi: rgb(255 255 255 / 0.12);
-  --glass-chip-shadow: 0 1px 2px rgb(0 0 0 / 0.3);
   --chip-bg: rgb(255 255 255 / 0.07);
   --chip-bg-hover: rgb(255 255 255 / 0.12);
   --chip-shadow: inset 0 1px 0 rgb(255 255 255 / 0.12), 0 1px 2px rgb(0 0 0 / 0.3);
@@ -193,16 +185,10 @@ html {
 @media (min-width: 1024px) and (min-height: 900px) {
   .pitch-sticky {
     position: sticky;
-    top: min(calc(var(--nav-h, 74px) + 1rem), calc(100dvh - var(--panel-h, 0px) - 1rem));
+    /* below the navbar pill: 1.25rem offset + 56px pill + 1.25rem gap = the
+       navbar's flow height (--nav-h) + 1.5rem */
+    top: min(calc(var(--nav-h, 72px) + 1.5rem), calc(100dvh - var(--panel-h, 0px) - 1rem));
   }
-}
-
-.glass-tag {
-  background: var(--glass-chip-bg);
-  border: 1px solid var(--glass-line);
-  box-shadow: inset 0 1px 0 var(--glass-chip-hi), var(--glass-chip-shadow);
-  -webkit-backdrop-filter: blur(14px) saturate(180%);
-  backdrop-filter: blur(14px) saturate(180%);
 }
 
 /* Pill buttons/links: no border, the edge is a top highlight + soft shadow. */
