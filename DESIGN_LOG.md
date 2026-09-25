@@ -20,8 +20,11 @@ the Changelog. The "Current state" section is always rewritten to match reality.
 ### Hero (`src/components/Hero.tsx`) — "Airy wordmark" (Surname Study take two, A)
 
 - Centered, fills exactly one viewport (`h-full` inside a
-  `calc(100dvh - var(--nav-h))` flex column in `App.tsx`; `--nav-h` is measured
-  from the real navbar height in a `useLayoutEffect`).
+  `calc(100dvh - var(--nav-h))` wrapper in `pages/Home.tsx`; `--nav-h` is
+  measured from the real navbar height in a `useLayoutEffect` in `App.tsx`).
+  Content is centred on the true viewport middle with
+  `paddingBottom: var(--nav-h)`. There is no marquee under the hero any more;
+  the code rain fades out at the bottom instead (see Hero background).
 - **Kicker:** `FULLSTACK DEVELOPER · STOCKHOLM`, Geist Mono, `tracking-[0.26em]`,
   muted.
 - **Name (`<h1>`):** `TJERNSTROM` — Geist `font-extralight` (200), uppercase,
@@ -30,8 +33,10 @@ the Changelog. The "Current state" section is always rewritten to match reality.
   period (looked off-centre). Plain `o`, not `ö` — a deliberate call for now
   (rest of the site keeps `Tjernström`). `aria-label="Alexander Tjernström"`
   for the full name. Geist `@import` widened to `wght@100..900` for weight 200.
-- **CTA row:** `● Open to work` (green dot with an expanding ring ripple) +
-  `See the work ↓` (anchors to `#work`) — Geist Mono.
+- **Status row:** `● Open to work` (green dot with an expanding ring ripple) +
+  `Tell me what to build →` (underlined, red arrow; a `TransitionLink` to
+  `/contact`) — Geist Mono. `See the work ↓` (anchors to `#work`) moved to the
+  bottom centre of the hero.
 - **Scroll indicator:** original vertical `SCROLL` text + animated red line,
   top-right.
 - Motion (ripple, scroll line, rain) is disabled under
@@ -45,7 +50,11 @@ the Changelog. The "Current state" section is always rewritten to match reality.
   bolted to the glass, and a full-page-height animated canvas is too heavy.
 - Faint falling Geist-Mono glyphs (`0 1 { } ( ) < > / * ; = …`), brighter head
   char, indigo-white on dark / indigo on light. Head alpha ~0.34 dark. A
-  vertical CSS mask dims it to ~12% behind the headline band.
+  vertical CSS mask dims it to ~12% behind the headline band, brings it back in
+  the lower third, then fades it to transparent at the bottom edge.
+- `variant="page"` is a fixed, viewport-sized layer (no hero scoping) with
+  softer top/bottom mask edges and 2.4x alpha; the contact page uses it behind
+  its glass cards, so it stays put while the cards scroll over it.
 - Pauses off-screen (`IntersectionObserver`); resizes via `ResizeObserver`;
   static sparse frame under `prefers-reduced-motion`.
 - The static `body` `background-image` glow was removed earlier and stays gone.
@@ -71,11 +80,65 @@ the Changelog. The "Current state" section is always rewritten to match reality.
   the wordmark clears the ~22px rounded cap (was hugging it). Small ~8px
   rightward settle vs the unscrolled `px-6` nav.
 
+- Menu items are router `Link`s (`/#work`, `/#about`) with the same
+  `tracking-[0.3em]` as the wordmark. A `Start a project` glass pill (`CtaPill`,
+  red arrow) sits between the menu and the theme toggle, and is hidden on
+  `/contact`. The wordmark is a `Link` to `/`. The nav has
+  `view-transition-name: site-nav` so it stays put during page transitions.
+
 ### Section anchors
 
-- `#work` → `Projects` `<section>` (`scroll-mt-24`)
-- `#about` → `About` `<section>` (`scroll-mt-24`)
+- `/#work` → `Projects` `<section>` (`scroll-mt-24`)
+- `/#about` → `About` `<section>` (`scroll-mt-24`)
+- `ScrollManager` scrolls to the hash after a route change, or to the top for a
+  fresh page (back/forward is left to the browser).
 - `html { scroll-behavior: smooth }` (auto under reduced motion)
+
+### Routing, dark default and transitions
+
+- `react-router-dom` v7, `BrowserRouter useTransitions={false}` (state updates
+  must commit synchronously inside a view transition). Routes: `/`, `/contact`,
+  anything else redirects home. **The host must serve `index.html` for unknown
+  paths** (Vercel / Netlify / Cloudflare do; GitHub Pages does not).
+- Dark is the default: `index.html` ships `<html class="dark">` and a pre-paint
+  script removes it only if `localStorage.theme === 'light'`.
+- `TransitionLink` wraps `Link` and uses the View Transitions API for page
+  changes (same-page hash links, modified clicks, reduced motion and browsers
+  without the API fall through to a plain `Link`). To `/contact`: the old page
+  fades out (240ms), then the contact cards stagger in (`.reveal`, 110ms
+  apart, 700ms each). Back home: the old page fades out, the home page rises
+  12px into place. **Gotcha:** the cards' start delay lives in a class on
+  `<html>` (`reveal-delay`) that must stay until they finish; removing it
+  mid-run shortens every remaining delay and the stagger jumps ahead.
+
+### Glass ("Frost") surfaces (`src/index.css`)
+
+- Frosted cards and controls from the Frost design: `@utility glass`
+  (translucent fill, sheen, inset top highlight, `backdrop-filter`), tokens in
+  `:root` / `.dark`. No borders on buttons or chips; the edge is a top
+  highlight plus a soft shadow. The blobs from the original Frost mock were
+  removed; the code rain is the only thing behind the glass.
+- `.glass-pill` (all buttons and CTAs, via `CtaPill`): a slight tint, darker than
+  the card in light mode and lighter in dark, red arrow. `.chip`: same tint;
+  the selected chip is the brightest thing (bright glass in dark, solid white
+  and lifted 1px in light) and shows a bare check (no circle, no colour).
+- `.fold`: follow-up questions open with a height + fade animation and their
+  chips fan out (`.fold-item`); closed folds are `inert` and take no space.
+
+### Contact page (`src/pages/Contact.tsx`)
+
+- "Tell me what to build." A six-step project brief in the Frost style: what
+  are we building (with follow-up kinds), about you, what goes on it, how should
+  it feel (style / theme / language, each with a "Both" option), the practical
+  bits (domain, email, timing), anything else.
+- There is no backend. Send builds a `mailto:` to `tjernstrom@proton.me` with
+  the answered questions only, then shows "Hit send." with Open mail app /
+  Copy brief / Edit brief. Copy is honest about it being a draft.
+- Desktop: the left glass panel holds the pitch, "What I build", recent client
+  work, GitHub ("More work") and the plain-email line. It follows the scroll on
+  screens >= 900px tall (`.pitch-sticky`); it is taller than the screen, so it
+  pins by its bottom edge (`--panel-h` is set from a `ResizeObserver`). The
+  same content sits below the form on mobile.
 
 ### Type / label system (page-wide)
 
@@ -91,7 +154,7 @@ Deliberate split so the chrome reads technical and the prose reads human:
   Project card titles: Geist `font-medium`.
 - **Geist Mono** (`font-mono`) — every label and every piece of data: section
   eyebrows, sub-labels (Skills / Experience / Education), date ranges, skill
-  pills, project URLs + tags, the marquee, the footer, the
+  pills, project URLs + tags, the footer, the
   CV / LinkedIn / GitHub / email links in About.
 - **Inter** (`font-display`) — body copy only (paragraphs).
 
@@ -112,9 +175,10 @@ Deliberate split so the chrome reads technical and the prose reads human:
   date ranges are Geist Mono.
 - **Contact info lives here now** — there is no Contact section. Under the
   CV / LinkedIn / GitHub row in the bio column there's a `mailto:` link showing
-  `alex_tjernstrom@hotmail.com` (`tracking-normal` so the address isn't
-  spread). The bio already closes with "feel free to reach out". The
-  `Contact.tsx` component and the `#contact` nav item were deleted.
+  `tjernstrom@proton.me` (`tracking-normal` so the address isn't spread; was
+  a hotmail address until 2026-09-25). The bio already closes with "feel free
+  to reach out". The old Contact *section* and the `#contact` nav item were
+  deleted; the separate `/contact` *page* (below) is a different thing.
 
 **Full name lives in:** the About intro line (above), the footer copyright
 (`© 2026 Alexander Tjernström`), the `<h1 aria-label>` in the hero, and
@@ -145,8 +209,8 @@ Unified so the sections read as one document, not floating islands:
   (Vercel URL in Slack/iMessage/etc.) lead with the name, role in the
   description. No OG image yet (`summary` card); `og:url` not set — add the
   real Vercel URL when known.
-- `Marquee.tsx`: Geist Mono; `shrink-0` so it can't be squeezed; sits flush at
-  the bottom of the first screen.
+- `Marquee.tsx` was deleted (2026-09-25, changelog 26). The hero now ends with
+  a fade instead of a strip.
 - `Footer.tsx`: left-aligned (was centered), `border-t`, Geist Mono, two items —
   `© 2026 Alexander Tjernström` / `Built with React + Tailwind`.
 
@@ -335,6 +399,27 @@ _Status: **A picked and shipped** (take two) — airy wordmark, no red period
     item. The email is now a `mailto:` link under the CV/LinkedIn/GitHub row
     in the About bio (which already ends with "feel free to reach out"). Nav
     menu is `WORK / ABOUT`.
+
+### 2026-09-25
+
+26. **Marquee removed.** The hero stays one viewport; the code-rain mask now
+    fades to transparent at the bottom so nothing needs to cap it, and the hero
+    content is centred on the true viewport middle.
+27. **Nav menu** letter-spacing matches the wordmark (`0.3em`); contact email
+    is now `tjernstrom@proton.me`.
+28. **Contact page** at `/contact` (react-router), plus CTAs: `Start a project`
+    pill in the nav, `Tell me what to build →` in the hero (`See the work ↓`
+    moved to the bottom), and a closing band on the home page.
+29. **Frost glass** applied to the contact page and all buttons; dark is the
+    default theme.
+30. **Chip and button states** iterated: bordered chips with a red check were
+    replaced by borderless tinted chips with a bare check; selected = brightest.
+31. **Unfold options** for follow-up questions; Both options for theme and
+    language; six steps (added domain / email / timing to Frost's five).
+32. **Sticky pitch panel** on the contact page (>= 900px tall), with services,
+    client work, GitHub and email inside it.
+33. **Page transition:** tried a slide-over (looked cheap), then chose the
+    staggered fade (see Routing, dark default and transitions).
 
 ---
 
