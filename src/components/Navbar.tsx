@@ -11,11 +11,6 @@ type NavbarProps = {
   ref?: Ref<HTMLElement>;
 };
 
-const links = [
-  { label: "Work", to: "/#work" },
-  { label: "About", to: "/#about" },
-];
-
 const iconButton =
   "flex items-center justify-center rounded-md p-1.5 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-400 dark:focus-visible:outline-zinc-500";
 
@@ -54,7 +49,12 @@ function SoundToggle() {
 }
 
 export function Navbar({ onToggleTheme, scrolled, ref }: NavbarProps) {
-  const onContactPage = useLocation().pathname === "/contact";
+  const { pathname } = useLocation();
+  const onContactPage = pathname === "/contact";
+  const onAboutPage = pathname === "/about";
+  // The home page is a single screen and never scrolls, so its bar never turns
+  // into a pill; the About page (which scrolls) still does.
+  const pill = scrolled && pathname !== "/";
 
   // Contact page: the same full-width bar as the home page at the top, with a
   // back arrow instead of the menu. Scrolling turns it into a glass pill (same
@@ -100,35 +100,41 @@ export function Navbar({ onToggleTheme, scrolled, ref }: NavbarProps) {
       key="home"
       ref={ref}
       style={{
-        borderRadius: scrolled ? "100px" : "0",
-        maxWidth: scrolled ? "min(1024px, calc(100% - 1rem))" : "100%",
-        top: scrolled ? "1.25rem" : "0",
+        borderRadius: pill ? "100px" : "0",
+        maxWidth: pill ? "min(1024px, calc(100% - 1rem))" : "100%",
+        top: pill ? "1.25rem" : "0",
         viewTransitionName: "site-nav",
       }}
       className={`sticky z-50 mx-auto flex justify-between items-center border backdrop-blur-md text-zinc-900 dark:text-zinc-100 text-xs transition-all duration-1000 ease-in-out tracking-widest ${
-        scrolled
+        pill
           ? "py-3.5 px-6 sm:px-8 shadow-xl border-black/10 dark:border-white/20 bg-black/5 dark:bg-white/10 shadow-black/10 dark:shadow-black/50"
           : "py-5 px-6 sm:px-8 lg:px-12 border-transparent bg-transparent"
       }`}
     >
-      <TransitionLink
-        to="/"
-        aria-label="Tjernström — back to top"
-        className="font-heading uppercase text-sm font-extralight tracking-[0.3em] leading-none whitespace-nowrap transition-opacity hover:opacity-70"
-      >
-        tjrnstrm
-      </TransitionLink>
+      {/* No wordmark. The About page gets a back arrow, like the contact page. */}
+      {onAboutPage && (
+        <TransitionLink
+          to="/"
+          aria-label="Back to home"
+          className={iconButton}
+          onClick={() => playSound("bloom")}
+        >
+          <FiArrowLeft size={18} />
+        </TransitionLink>
+      )}
 
-      <div className="flex items-center gap-1 uppercase">
-        <div className="hidden sm:flex items-center gap-1">
-          {links.map((l) => (
-            <TransitionLink key={l.to} to={l.to} className="nav-link font-light tracking-[0.3em]">
-              {l.label}
-            </TransitionLink>
-          ))}
-        </div>
+      <div className="ml-auto flex items-center gap-1 uppercase">
+        {!onAboutPage && (
+          <TransitionLink
+            to="/about"
+            className="nav-link font-light tracking-[0.3em]"
+            onClick={() => playSound("arrival")}
+          >
+            About
+          </TransitionLink>
+        )}
         <div className="mx-1 sm:ml-3">
-          <CtaPill to="/contact">
+          <CtaPill to="/contact" quiet>
             <span className="sm:hidden">Contact</span>
             <span className="hidden sm:inline">Start a project</span>
           </CtaPill>

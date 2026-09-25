@@ -10,8 +10,12 @@ the Changelog. The "Current state" section is always rewritten to match reality.
 - **Stack:** Vite + React 19 + TypeScript + Tailwind v4, `react-icons`
 - **Fonts:** Inter (body/UI, `--font-display`), Geist (headings, `--font-heading`),
   Geist Mono (`--font-mono`) — all via Google Fonts `@import` in `src/index.css`
-- **Theme:** class-based dark mode (`.dark` on `<html>`), persisted to
-  `localStorage['theme']`, default dark. Toggle lives in the navbar.
+- **Theme:** class-based dark mode (`.dark` on `<html>`). It follows the
+  visitor's system preference (`prefers-color-scheme`), including live changes,
+  until they use the toggle in the navbar; that choice is saved in
+  `localStorage['theme-choice']` and wins from then on. (The old `'theme'` key
+  is ignored: the previous code saved its "dark" default into it on every first
+  visit, so it can't tell a choice from a default.)
 
 ---
 
@@ -35,10 +39,10 @@ the Changelog. The "Current state" section is always rewritten to match reality.
   for the full name. Geist `@import` widened to `wght@100..900` for weight 200.
 - **Status row:** `● Open to work` (green dot with an expanding ring ripple) +
   `Tell me what to build →` (underlined, red arrow; a `TransitionLink` to
-  `/contact`) — Geist Mono. `See the work ↓` (anchors to `#work`) moved to the
-  bottom centre of the hero.
-- **Scroll indicator:** original vertical `SCROLL` text + animated red line,
-  top-right.
+  `/contact`) — Geist Mono. The status text is `Taking new projects` (edited
+  by hand; it used to say `Open to work`).
+- The vertical `SCROLL` indicator was removed (2026-09-25) and so was the bottom
+  `See the work ↓` link: there is no Work section to point at any more.
 - Motion (ripple, scroll line, rain) is disabled under
   `prefers-reduced-motion`.
 
@@ -80,11 +84,17 @@ the Changelog. The "Current state" section is always rewritten to match reality.
   the wordmark clears the ~22px rounded cap (was hugging it). Small ~8px
   rightward settle vs the unscrolled `px-6` nav.
 
-- Menu items are router `Link`s (`/#work`, `/#about`) with the same
-  `tracking-[0.3em]` as the wordmark. A `Start a project` glass pill (`CtaPill`,
-  red arrow) sits between the menu and the theme toggle, and is hidden on
-  `/contact`. The wordmark is a `Link` to `/`. The nav has
-  `view-transition-name: site-nav` so it stays put during page transitions.
+- **The wordmark and the Work link are gone** (2026-09-25). The home navbar is
+  now just `About` (a `TransitionLink` to `/about`, `tracking-[0.3em]`, no hover
+  background: the text softens to zinc-600 / zinc-400; plays `arrival`), the
+  `Start a project` glass pill (`CtaPill`, red arrow) and the theme toggle, all
+  on the right. On `/about` the About link is hidden and a back arrow (like the
+  contact page's) sits on the left. The nav has `view-transition-name:
+  site-nav` so it stays put during page transitions. The `Start a project`
+  button is the "quiet pill" (`CtaPill quiet`): sentence case, Geist 13px
+  medium, no arrow at rest, the red arrow slides in on hover or focus (chosen
+  from the "Nav CTA Options" artifact; the closing band keeps the uppercase
+  pill).
 - **On `/contact` the navbar has different contents and one extra shape.** At
   the top it is the same full-width bar as on the home page, with a back arrow
   (`FiArrowLeft`, a `TransitionLink` to `/`) instead of the wordmark, no menu,
@@ -99,12 +109,21 @@ the Changelog. The "Current state" section is always rewritten to match reality.
   switching pages remounts it, and `App` resets `scrolled` in the same render as
   the route change so it never mounts as a pill after leaving a scrolled page.
 
-### Section anchors
+### Pages
 
-- `/#work` → `Projects` `<section>` (`scroll-mt-24`)
-- `/#about` → `About` `<section>` (`scroll-mt-24`)
-- `ScrollManager` scrolls to the hash after a route change, or to the top for a
-  fresh page (back/forward is left to the browser).
+- `/` is now just the hero, exactly one screen and not scrollable: the footer
+  lies over the bottom of the hero (`<Footer overlay />`), transparent and
+  without its separator line (other pages keep the normal footer), and the
+  navbar never turns into a pill here. The **Work section was removed** (`Projects.tsx` and `ProjectCard.tsx` are
+  deleted, they are in git history; `data/projects.ts` stays, the contact page
+  uses `clientProjects`).
+- `/about` is the About section on its own page (`pages/AboutPage.tsx`, sets
+  the document title), followed by the closing "Tell me what to build" band
+  (`ContactCta`) and the footer. Its navbar still turns into a pill on scroll. Reached from the navbar's About link; `TransitionLink`
+  gives it the fade-out / rise transition.
+- `ScrollManager` still scrolls to a hash after a route change, or to the top
+  for a fresh page (back/forward is left to the browser). Nothing links to an
+  anchor any more.
 - `html { scroll-behavior: smooth }` (auto under reduced motion)
 
 ### Routing, dark default and transitions
@@ -113,8 +132,10 @@ the Changelog. The "Current state" section is always rewritten to match reality.
   must commit synchronously inside a view transition). Routes: `/`, `/contact`,
   anything else redirects home. **The host must serve `index.html` for unknown
   paths** (Vercel / Netlify / Cloudflare do; GitHub Pages does not).
-- Dark is the default: `index.html` ships `<html class="dark">` and a pre-paint
-  script removes it only if `localStorage.theme === 'light'`.
+- The theme is resolved before first paint by a small script in `index.html`
+  (saved `theme-choice`, else the system preference) so there's no flash;
+  `App.tsx` starts from that class, follows system changes while there is no
+  saved choice, and only saves on a toggle click.
 - `TransitionLink` wraps `Link` and uses the View Transitions API for page
   changes (same-page hash links, modified clicks, reduced motion and browsers
   without the API fall through to a plain `Link`). To `/contact`: the old page
@@ -132,7 +153,7 @@ the Changelog. The "Current state" section is always rewritten to match reality.
   anything. `useSoundEnabled()` / `setSoundEnabled()` drive the mute button in
   the contact navbar. Used so far: `toggle` on every chip, `success` on Send and
   Copy brief, `arrival` when navigating to the contact page, `bloom` on the
-  contact navbar's back arrow, `page` on the theme toggle (volume 0.35), `error` when Send is
+  contact navbar's back arrow (and the About page's), `arrival` on the About link, `page` on the theme toggle (volume 0.35), `error` when Send is
   pressed with a mandatory field missing, and a quiet `tick` (volume 0.1) when
   the mouse enters a button (`startHoverSounds()`: one delegated
   `pointerover` listener over `button`, `.glass-pill`, `.chip` and `nav a`;
@@ -463,6 +484,20 @@ _Status: **A picked and shipped** (take two) — airy wordmark, no red period
 36. **Contact page:** mandatory name and email with red stars on a failed Send;
     removed the "Taking new projects" tag (the home page already says it) and
     its `.glass-tag` styles; hover tick on buttons.
+37. **Home page simplified:** removed the Work section, moved About to its own
+    `/about` page, removed the wordmark and the Work link from the navbar,
+    removed the Scroll indicator (and the now dead `See the work ↓` link and
+    the unused `scroll-line` / `marquee` keyframes).
+38. **Contact page:** 20px between the content and the footer line (the form
+    used to end flush with it); the sticky panel's bottom margin is the same
+    20px.
+39. **Home is one screen:** the closing "Tell me what to build" band moved to
+    the About page; the footer now lies transparently over the hero (no
+    separator, home only); the navbar no longer pills on scroll on home.
+40. **Navbar buttons:** `Start a project` is the quiet pill; the About link lost
+    its hover background (text softens instead) and plays `arrival`.
+41. **Theme follows the system** unless the visitor toggles it (saved as
+    `theme-choice`).
 
 ---
 

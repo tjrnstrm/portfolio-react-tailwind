@@ -5,10 +5,13 @@ import { ScrollManager } from './components/ScrollManager';
 import { startHoverSounds } from './lib/sound';
 import { Home } from './pages/Home';
 import { Contact } from './pages/Contact';
+import { AboutPage } from './pages/AboutPage';
 
 export default function App() {
-  const [theme, setTheme] = useState<'dark' | 'light'>(
-    () => (localStorage.getItem('theme') as 'dark' | 'light') ?? 'dark',
+  // index.html already resolved the theme (saved choice, else the system
+  // preference) and set the class before first paint; start from that.
+  const [theme, setTheme] = useState<'dark' | 'light'>(() =>
+    document.documentElement.classList.contains('dark') ? 'dark' : 'light',
   );
   const { pathname } = useLocation();
   const [scrolled, setScrolled] = useState(false);
@@ -21,8 +24,24 @@ export default function App() {
 
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
-    localStorage.setItem('theme', theme);
   }, [theme]);
+
+  // Without a saved choice, follow the system when it changes (e.g. automatic
+  // day/night switching).
+  useEffect(() => {
+    const query = window.matchMedia('(prefers-color-scheme: dark)');
+    const onChange = (e: MediaQueryListEvent) => {
+      let choice: string | null = null;
+      try {
+        choice = localStorage.getItem('theme-choice');
+      } catch {
+        // private mode: treat as no choice
+      }
+      if (!choice) setTheme(e.matches ? 'dark' : 'light');
+    };
+    query.addEventListener('change', onChange);
+    return () => query.removeEventListener('change', onChange);
+  }, []);
 
   useEffect(() => startHoverSounds(), []);
 
@@ -55,7 +74,14 @@ export default function App() {
 
   const toggleTheme = () => {
     document.documentElement.classList.add('theme-transitioning');
-    setTheme((t) => (t === 'dark' ? 'light' : 'dark'));
+    const next = theme === 'dark' ? 'light' : 'dark';
+    // only an explicit toggle is remembered; otherwise the system decides
+    try {
+      localStorage.setItem('theme-choice', next);
+    } catch {
+      // private mode: the choice just lasts for this visit
+    }
+    setTheme(next);
     setTimeout(
       () => document.documentElement.classList.remove('theme-transitioning'),
       500,
@@ -68,6 +94,7 @@ export default function App() {
       <ScrollManager />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/about" element={<AboutPage />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

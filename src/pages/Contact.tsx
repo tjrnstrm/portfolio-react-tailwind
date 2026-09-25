@@ -586,7 +586,7 @@ export function Contact() {
         <HeroBackground variant="page" />
       </div>
 
-      <div className="grid gap-y-8 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-x-6">
+      <div className="grid gap-y-8 lg:mb-5 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-x-6">
         {/* Pitch. On desktop this is one frosted panel that holds the pitch,
             services, client work, GitHub and email, and follows the scroll while
             the form is filled in (see .pitch-sticky in index.css). */}
@@ -596,7 +596,7 @@ export function Contact() {
         >
           <section className="flex flex-col gap-7">
             <p className="-mb-3 font-mono text-[11px] tracking-[0.26em] uppercase text-zinc-500 dark:text-zinc-400">
-              Free consultation · Stockholm
+              Free consultation
             </p>
             <h1 className="text-4xl leading-[1.05] font-extralight tracking-[0.1em] uppercase wrap-break-word sm:text-6xl lg:text-[clamp(2.75rem,4.2vw,4.5rem)]">
               Tell me what to build<span className="text-red-500">.</span>

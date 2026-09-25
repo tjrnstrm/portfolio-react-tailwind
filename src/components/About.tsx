@@ -25,7 +25,7 @@ const labelClass =
 
 export function About() {
   return (
-    <section id="about" className="scroll-mt-24 py-14 flex flex-col w-full">
+    <section className="py-14 flex flex-col w-full">
       <div className="border-b border-zinc-300 dark:border-zinc-200/10 pb-5 mb-8 sm:mb-12">
         <p className={labelClass}>Who am I?</p>
         <h2 className="font-heading text-[clamp(2rem,5.5vw,3.5rem)] font-light tracking-[0.15em] uppercase">

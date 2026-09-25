@@ -1,16 +1,20 @@
 <!doctype html>
-<html lang="en" class="dark">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="dark light" />
-    <!-- Dark is the default; only an explicit "light" choice turns it off.
-         Runs before first paint so there's no light flash on load. -->
+    <!-- The theme follows the visitor's system preference unless they have
+         picked one with the toggle (saved as 'theme-choice'). Runs before first
+         paint so there's no flash of the wrong theme on load. -->
     <script>
       try {
-        if (localStorage.getItem('theme') === 'light')
-          document.documentElement.classList.remove('dark');
+        var choice = localStorage.getItem('theme-choice');
+        var dark = choice
+          ? choice === 'dark'
+          : window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.classList.toggle('dark', dark);
       } catch (e) {}
     </script>
 
