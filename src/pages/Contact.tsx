@@ -61,9 +61,8 @@ export function Contact() {
       }
       return;
     }
-    playSound('success');
-    setDone(true);
-    window.location.href = href;
+    // Sending is switched off until the form works for real (see DESIGN_LOG 52):
+    // a valid brief does nothing for now.
   };
 
   return (

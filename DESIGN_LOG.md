@@ -608,6 +608,12 @@ _Status: **A picked and shipped** (take two) — airy wordmark, no red period
     15px, and that used to rebuild everything and restart the rain. The still
     reduced-motion scatter is repainted after a resize for the same reason.
 
+52. **Send switched off for now.** The brief form still checks the required
+    fields (red stars, focus on the first empty one), but a valid Send no longer
+    opens the visitor's mail app or shows the "Hit send" view: it does nothing
+    until the real sending (`api/brief.ts`, Resend) has been finished and
+    tested. A friend's Outlook opened on the old button, which is why.
+
 ---
 
 ## Appendix — Cold Open full source
